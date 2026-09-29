@@ -16,21 +16,23 @@ Four pages only · no charts · **signal generation only — never places orders
    and starts the app at **http://127.0.0.1:5000** (the default Upstox redirect URL).
 3. Open the browser at `http://127.0.0.1:5000`.
 
-### Microsoft Qlib — installed from the official repository
+### Microsoft Qlib — vendored inside this repository
 
-Qlib is **not** taken from a mirror or a copy in this repo. `requirements.txt`
-installs it directly from source, pinned for reproducibility:
+The official [microsoft/qlib](https://github.com/microsoft/qlib) source is
+**committed to this repo** under `vendor/qlib/` (pinned commit
+`be725493eb1a6bbb42bf11b37aa7669f59610ff1`, provenance in
+`vendor/VENDOR_INFO.md`). `requirements.txt` installs it from that local copy:
 
 ```
-pyqlib @ git+https://github.com/microsoft/qlib.git@be725493eb1a6bbb42bf11b37aa7669f59610ff1
+./vendor/qlib
 ```
 
-* pip clones [microsoft/qlib](https://github.com/microsoft/qlib.git) at that commit
-  and builds it — the two Cython extensions under `qlib/data/_libs/` are the reason
-  the C++ build tools are required on Windows.
-* Working on Qlib itself? Clone it manually (`git clone https://github.com/microsoft/qlib.git`),
-  remove the `pyqlib @ git+...` line from `requirements.txt`, then
-  `.venv\Scripts\pip install -e qlib`.
+* `pip install` builds the vendored source — the two Cython extensions under
+  `vendor/qlib/qlib/data/_libs/` are the reason the C++ build tools are
+  required on Windows. No network fetch of Qlib is needed at install time.
+* The installed package records its origin as this repository's vendor path
+  (`direct_url.json` → `file:…/vendor/qlib`), and the app runs against that
+  build.
 * The app drives Qlib through its real APIs: `qlib.init` → binary dataset →
   `QlibDataLoader` expression features → `LightGBModel` fit/predict with
   out-of-sample evaluation and recorder metrics.
