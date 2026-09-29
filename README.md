@@ -9,10 +9,31 @@ Four pages only · no charts · **signal generation only — never places orders
 
 ## Quick start (Windows 11)
 
-1. Install **Python 3.11 (64-bit)** from python.org (check *Add to PATH*).
+1. Install **Python 3.11 (64-bit)** from python.org (check *Add to PATH*),
+   **Git for Windows**, and **Build Tools for Visual Studio** with the
+   *Desktop development with C++* workload — Qlib is compiled from source on first run.
 2. Double-click **`run.bat`** — it creates `.venv`, installs `requirements.txt`,
    and starts the app at **http://127.0.0.1:5000** (the default Upstox redirect URL).
 3. Open the browser at `http://127.0.0.1:5000`.
+
+### Microsoft Qlib — installed from the official repository
+
+Qlib is **not** taken from a mirror or a copy in this repo. `requirements.txt`
+installs it directly from source, pinned for reproducibility:
+
+```
+pyqlib @ git+https://github.com/microsoft/qlib.git@be725493eb1a6bbb42bf11b37aa7669f59610ff1
+```
+
+* pip clones [microsoft/qlib](https://github.com/microsoft/qlib.git) at that commit
+  and builds it — the two Cython extensions under `qlib/data/_libs/` are the reason
+  the C++ build tools are required on Windows.
+* Working on Qlib itself? Clone it manually (`git clone https://github.com/microsoft/qlib.git`),
+  remove the `pyqlib @ git+...` line from `requirements.txt`, then
+  `.venv\Scripts\pip install -e qlib`.
+* The app drives Qlib through its real APIs: `qlib.init` → binary dataset →
+  `QlibDataLoader` expression features → `LightGBModel` fit/predict with
+  out-of-sample evaluation and recorder metrics.
 
 ### Upstox connection (Settings page)
 1. Create an app at [Upstox Developer](https://upstox.com/developer/) with redirect URL

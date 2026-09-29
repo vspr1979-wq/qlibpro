@@ -1,11 +1,14 @@
 # OptionSignal — Windows 11 (Python 3.11) dependency set (validated versions)
+# Microsoft Qlib is installed from the official GitHub repository
+# (cloned source, pinned commit) — requires Git on PATH and a C++ build
+# toolchain (Visual Studio Build Tools) for qlib's Cython extensions.
 Flask==3.1.3
 requests==2.34.2
 websocket-client==1.9.2
-pandas==3.0.6
+pandas==2.3.3
 numpy==2.4.6
-pyqlib==0.9.7
+pyqlib @ git+https://github.com/microsoft/qlib.git@be725493eb1a6bbb42bf11b37aa7669f59610ff1
 lightgbm==4.7.0
-mlflow==3.16.1
+mlflow==3.12.0
 scikit-learn==1.9.1
 scipy==1.17.1
