@@ -12,12 +12,20 @@ This directory is the **Microsoft Qlib source used by OptionSignal**.
 builds against the copy committed in this repository — no network fetch of
 Qlib at install time.
 
-## Local patch (only one)
+## Local patches (two)
 
-`vendor/qlib/pyproject.toml` — added `fallback_version = "0.1.dev1"` to
-`[tool.setuptools_scm]`, because the stripped `.git` directory means
-setuptools-scm cannot detect the version from tags. Everything else is
-byte-identical to the pinned upstream commit.
+1. `vendor/qlib/pyproject.toml` — added `fallback_version = "0.1.dev1"` to
+   `[tool.setuptools_scm]`, because the stripped `.git` directory means
+   setuptools-scm cannot detect the version from tags.
+2. `vendor/qlib/qlib/workflow/expm.py` (`_get_or_create_exp`) — upstream built the
+   file-store lock path with `os.path.join(pr.netloc, pr.path.lstrip("/"), "filelock")`;
+   for a `file:` URI the netloc is empty, which produced a **cwd-relative**
+   `home/user/…/mlruns/filelock` and polluted the working directory. The patch
+   keeps the absolute `pr.path` when netloc is empty (non-empty netloc behaves
+   exactly as upstream). Verified: fresh experiment creation no longer writes
+   outside `mlruns/`.
+
+Everything else is byte-identical to the pinned upstream commit.
 
 ## Refreshing to a newer upstream commit
 

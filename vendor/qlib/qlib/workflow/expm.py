@@ -233,7 +233,11 @@ class ExpManager:
             # So we supported it in the interface wrapper
             pr = urlparse(self.uri)
             if pr.scheme == "file":
-                with FileLock(Path(os.path.join(pr.netloc, pr.path.lstrip("/"), "filelock"))):  # pylint: disable=E0110
+                # Vendor patch: with an empty netloc the original join(netloc, path.lstrip("/"),
+                # "filelock") produced a cwd-relative path (polluting the working directory
+                # with home/user/...). Keep file: URIs absolute; non-empty netloc unchanged.
+                lock_dir = pr.path.lstrip("/") if pr.netloc else pr.path
+                with FileLock(Path(os.path.join(pr.netloc, lock_dir, "filelock"))):  # pylint: disable=E0110
                     return self.create_exp(experiment_name), True
             # NOTE: for other schemes like http, we double check to avoid create exp conflicts
             try:
