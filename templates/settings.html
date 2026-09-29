@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+
+{% if request.args.get('auth') %}
+<div class="note" style="margin-bottom:10px">
+  {% if request.args.get('auth') == 'ok' %}
+    ✅ Upstox connected — access token saved, instruments download started automatically.
+  {% else %}
+    ⚠ OAuth error: {{ request.args.get('msg', 'unknown error') }} — check API credentials and retry CONNECT.
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="grid g2">
+  <div class="panel">
+    <h2>Broker: Upstox</h2>
+    <label class="f"><span>API Key</span><input type="text" id="apiKey" autocomplete="off"></label>
+    <label class="f"><span>API Secret</span><input type="password" id="apiSecret" autocomplete="off"></label>
+    <label class="f"><span>Redirect URL</span><input type="text" id="redirectUrl"></label>
+    <div class="kv" style="margin-top:6px">
+      <div class="k">Status</div><div class="v" id="brokerStatus">—</div>
+      <div class="k">Instruments</div><div class="v" id="brokerInstruments">—</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:9px">
+      <button class="action" id="btnConnect">CONNECT</button>
+      <button class="action danger" id="btnDisconnect">DISCONNECT</button>
+      <button class="action secondary" id="btnInstruments">Refresh instruments</button>
+    </div>
+    <div class="logs" id="oauthLog" style="margin-top:9px"></div>
+    <div class="note">CONNECT: browser auth → callback on
+      <span class="mono" id="redirectNote">http://127.0.0.1:5000/upstox/callback</span>
+      → token → auto-connect → instruments downloaded once, reused afterwards.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Strategy Settings</h2>
+    <label class="f"><span>ATM Range</span><input type="number" id="setAtmRange"></label>
+    <label class="f"><span>Small Premium Min (₹)</span><input type="number" id="setPremMin"></label>
+    <label class="f"><span>Small Premium Max (₹)</span><input type="number" id="setPremMax"></label>
+    <label class="f"><span>Maximum Risk (₹)</span><input type="number" id="setMaxRisk"></label>
+    <label class="f"><span>Maximum Capital (₹)</span><input type="number" id="setMaxCapital"></label>
+    <label class="f"><span>Minimum Risk/Reward</span><input type="number" step="0.1" id="setMinRr"></label>
+    <label class="f"><span>Maximum Lots</span><input type="number" id="setMaxLots"></label>
+    <div style="display:flex;gap:8px;margin-top:9px">
+      <button class="action" id="btnSaveSettings">Save Settings</button>
+      <span class="muted" id="settingsMsg"></span>
+    </div>
+    <div class="note">Non-trading constraints only — CE/PE, strike and levels come from Qlib
+      model output plus live market evidence; otherwise → NO TRADE.</div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:10px">
+  <h2>Logs / Errors <span class="muted" style="text-transform:none;letter-spacing:0">— last 50</span></h2>
+  <div class="logs" id="logsBox" style="max-height:260px"></div>
+</div>
+
+{% endblock %}

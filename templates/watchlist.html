@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Watchlist & Option Chain{% endblock %}
+{% block content %}
+
+<div class="grid g2-wide">
+  <div class="panel">
+    <h2>Watchlist</h2>
+    <div style="display:flex;gap:6px;margin-bottom:7px">
+      <input type="text" id="wlSearch" placeholder="Search underlying (e.g. NIFTY, BANKNIFTY, SENSEX)…" style="flex:1">
+      <button class="action" id="wlSearchBtn">Search</button>
+      <button class="action" id="wlAddBtn">+ Add</button>
+    </div>
+    <div id="wlResults"></div>
+    <div id="wlRows"><div class="empty">Loading…</div></div>
+    <div class="note">Only <b>enabled</b> symbols are analysed — enforced in the service layer.
+      The application analyses ONLY symbols added to this watchlist.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Lot sizes <span class="muted" style="text-transform:none;letter-spacing:0">— from Upstox instruments (SQLite)</span></h2>
+    <table>
+      <thead><tr><th style="text-align:left">Underlying</th><th>Lot Size</th><th>Strike Step</th></tr></thead>
+      <tbody id="lotBody">
+        <tr><td colspan="3" class="empty">Download instruments (Settings) to see real lot sizes.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">All quantities = lots × lot size where lot size comes from the Upstox
+      instrument master — refreshed automatically on the next instruments download.</div>
+  </div>
+</div>
+
+<div class="section-title">Option Chain <span class="sub">— all enabled symbols collected automatically; dropdown picks the view</span></div>
+<div class="panel">
+  <div class="toolbar">
+    <span class="lab">Symbol</span>
+    <select id="chainSymbol"></select>
+    <span>Spot: <b id="chSpot">—</b></span>
+    <span>ATM: <b id="chATM">—</b></span>
+    <span>Expiry: <b id="chExpiry">—</b></span>
+    <span>Lot: <b id="chLot">—</b></span>
+    <span>Range: <b id="chRange">ATM ±15</b></span>
+    <span class="badge" id="chFresh">—</span>
+  </div>
+  <div class="table-scroll tall">
+    <table id="chainTable">
+      <thead>
+        <tr>
+          <th class="strike" rowspan="2">Strike</th>
+          <th class="grp-ce" colspan="13">CE (Call)</th>
+          <th class="grp-pe" colspan="13">PE (Put)</th>
+        </tr>
+        <tr>
+          <th>Premium</th><th>Bid</th><th>Ask</th><th>Spread</th><th>OI</th><th>Chg OI</th><th>Volume</th>
+          <th>IV</th><th>Delta</th><th>Gamma</th><th>Theta</th><th>Vega</th><th>LQ</th>
+          <th>Premium</th><th>Bid</th><th>Ask</th><th>Spread</th><th>OI</th><th>Chg OI</th><th>Volume</th>
+          <th>IV</th><th>Delta</th><th>Gamma</th><th>Theta</th><th>Vega</th><th>LQ</th>
+        </tr>
+      </thead>
+      <tbody id="chainBody">
+        <tr><td colspan="27" class="empty">No chain data yet — connect Upstox on the Settings page.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">ATM ±15 strikes, both CE and PE. Live from Upstox — LQ = Last Traded Quantity.</div>
+</div>
+
+{% endblock %}

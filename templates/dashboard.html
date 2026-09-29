@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<!-- 1) MAIN SIGNAL + MARKET/SELECTION -->
+<div class="grid g2-wide" style="margin-bottom:10px">
+  <div class="signal-card" id="signalCard">
+    <div class="signal-left">
+      <div class="signal-label">Main Signal</div>
+      <div class="signal-big" id="sigBig">—</div>
+      <div class="signal-sub" id="sigOption">no data yet</div>
+      <div class="muted" style="margin-top:4px;font-size:11.5px">
+        symbol: <select id="planSymbol"></select>
+      </div>
+    </div>
+    <div class="signal-right">
+      <div id="sigBadges" style="margin-bottom:4px"></div>
+      <div class="reason" id="sigReason">
+        Signals appear here automatically after Upstox connection and Qlib validation.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Market / Selection</h2>
+    <div class="kv">
+      <div class="k">Upstox / Market</div><div class="v" id="mktConn">—</div>
+      <div class="k">Watchlist</div><div class="v" id="mktWatchlist">—</div>
+      <div class="k">Spot</div><div class="v" id="mktSpot">—</div>
+      <div class="k">Selected option</div><div class="v" id="mktOption">—</div>
+      <div class="k">CE / PE</div><div class="v" id="mktType">—</div>
+      <div class="k">Strategy type</div><div class="v" id="mktStrat">—</div>
+      <div class="k">QLib analysis</div><div class="v" id="mktQLib">—</div>
+      <div class="k">Signal status</div><div class="v" id="mktStatus">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2) SIGNAL BOARD -->
+<div class="panel" style="margin-bottom:10px">
+  <h2>Signal Board <span class="muted" style="text-transform:none;letter-spacing:0">— all enabled watchlist symbols, auto-updated</span></h2>
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left">Symbol</th><th>Spot</th><th>Change</th><th>QLib View</th>
+        <th>Conf.</th><th style="text-align:left">Signal</th><th style="text-align:left">Strategy</th>
+        <th>Selected Option</th><th>Status</th><th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="boardBody">
+      <tr><td colspan="10" class="empty">No enabled watchlist symbols — add symbols on page 2.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- 3) TRADE PLAN -->
+<div class="panel">
+  <h2>Trade Plan <span class="muted" style="text-transform:none;letter-spacing:0">— one row per symbol</span></h2>
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left">Symbol</th><th style="text-align:left">Strategy</th>
+        <th>Entry</th><th>T1</th><th>T2</th><th>T3</th><th>SL</th>
+        <th>Qty (lots × lot)</th><th>Lot size</th><th>Capital</th><th>Max risk</th>
+        <th>Gross profit</th><th>Charges</th><th>Net profit</th><th>R/R</th><th>Limits</th>
+      </tr>
+    </thead>
+    <tbody id="planBody">
+      <tr><td colspan="16" class="empty">Waiting for signals…</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">Qty = lots × lot size, lot sizes from the Upstox instruments file
+    (never hardcoded). NO TRADE rows show “—”. Every row is checked against
+    Max Risk / Max Capital / Max Lots.</div>
+</div>
+
+{% endblock %}

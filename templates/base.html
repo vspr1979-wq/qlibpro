@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OptionSignal — {% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-page="{{ page }}">
+
+<header>
+  <div class="brand"><span class="mark">●</span> OptionSignal <span>// Upstox × Qlib</span></div>
+  <span class="badge b-green" title="UI design locked as final">LOCKED · FINAL UI v1.0</span>
+  <nav>
+    <a href="{{ url_for('page_dashboard') }}" class="{{ 'active' if page=='dashboard' }}">1. Dashboard</a>
+    <a href="{{ url_for('page_watchlist') }}" class="{{ 'active' if page=='watchlist' }}">2. Watchlist &amp; Option Chain</a>
+    <a href="{{ url_for('page_qlib') }}" class="{{ 'active' if page=='qlib' }}">3. QLib Analysis</a>
+    <a href="{{ url_for('page_settings') }}" class="{{ 'active' if page=='settings' }}">4. Settings</a>
+  </nav>
+  <div class="status-strip">
+    <span><span class="dot g" id="stUpstoxDot"></span><span id="stUpstox">Upstox: —</span></span>
+    <span><span class="dot a" id="stMarketDot"></span><span id="stMarket">Market: —</span></span>
+    <span><span class="dot a" id="stDataDot"></span><span id="stData">Data: —</span></span>
+    <span><span class="dot a" id="stQlibDot"></span><span id="stQlib">QLib: —</span></span>
+    <span><span class="dot g"></span><span id="stSymbols">0 symbols</span></span>
+  </div>
+</header>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<div class="footer-note">
+  LOCKED · FINAL UI v1.0 — 4 pages · no charts · signal-only (no order execution) ·
+  real Upstox data + Microsoft Qlib · no mock data, no hardcoded trading rules.
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}QLib Analysis{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <h2>QLib Model Status</h2>
+  <div class="grid g2">
+    <div class="kv">
+      <div class="k">Model</div><div class="v" id="mdModel">LightGBM (Qlib workflow)</div>
+      <div class="k">Status</div><div class="v" id="mdStatus">—</div>
+      <div class="k">Trained / samples</div><div class="v" id="mdTrained">—</div>
+      <div class="k">Auto feed</div><div class="v" id="mdFeed">—</div>
+    </div>
+    <div class="kv">
+      <div class="k">OOS AUC / IC / acc</div><div class="v" id="mdMetrics">—</div>
+      <div class="k">Backtest (OOS)</div><div class="v" id="mdBacktest">—</div>
+      <div class="k">Auto-retrain</div><div class="v" id="mdRetrain">—</div>
+      <div class="k">Message</div><div class="v" id="mdMessage">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-title">Candidate Analysis <span class="sub">— every CE/PE within ATM ±15, all symbols, auto-updated</span></div>
+<div class="panel">
+  <div class="toolbar">
+    <span class="lab">Symbol</span>
+    <select id="qlibFilter">
+      <option value="ALL">ALL SYMBOLS (table view)</option>
+    </select>
+    <button class="action" id="qlibRunBtn">▶ Run Analysis Now</button>
+    <button class="action secondary" id="qlibRetrainBtn">↻ Retrain / Backtest</button>
+    <span class="muted" id="qlibRunStatus">Automatic for all symbols — manual run is an optional override.</span>
+  </div>
+  <div class="table-scroll tall">
+    <table id="qlibTable">
+      <thead>
+        <tr>
+          <th>Symbol</th><th>Strike</th><th>CE/PE</th><th>Premium</th><th>QLib Analysis</th><th>Momentum</th>
+          <th>Volume</th><th>OI Change</th><th>IV</th><th>Delta</th><th>Liquidity</th>
+          <th>Activity</th><th>Expected Move</th><th>Risk/Reward</th><th>Strategy Type</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="qlibBody">
+        <tr><td colspan="16" class="empty">No analysis yet — automatic Qlib analysis runs once live data is collected and the model is validated.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">Dropdown filters the table (and picks the symbol for the optional manual run) —
+    the pipeline always sends all enabled symbols to Qlib automatically. Values are computed
+    from model output and live market data; Status = SELECTED / CANDIDATE / REJECTED (with reason).</div>
+</div>
+
+{% endblock %}

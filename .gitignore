@@ -1,0 +1,9 @@
+# generated artifacts — keep out of git
+data/
+mlruns/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+mlflow.db
