@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OptionSignal — UI Layout (Cyber Theme, Example)</title>
+<title>OptionSignal — UI Layout (Cyber Theme, Compact)</title>
 <style>
   :root{
     --bg:#04070d; --panel:#070e18; --panel2:#0a1524; --border:#123247; --border2:#0e2739;
@@ -20,75 +20,78 @@
     background-size:44px 44px;
     color:var(--text);
     font-family:"Segoe UI", Tahoma, Arial, sans-serif;
-    font-size:13px;
+    font-size:12px;
   }
   /* ---------- Header / Nav ---------- */
   header{
     background:linear-gradient(180deg,#06111d,#04090f);
     border-bottom:1px solid var(--neon);
-    box-shadow:0 0 18px rgba(0,255,179,.15);
-    padding:10px 18px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+    box-shadow:0 0 14px rgba(0,255,179,.15);
+    padding:5px 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
     position:sticky;top:0;z-index:10;
   }
-  .brand{font-size:16px;font-weight:700;letter-spacing:1px;color:var(--neon);text-shadow:0 0 10px rgba(0,255,179,.55)}
-  .brand span{color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,.5);font-weight:400;font-size:12px}
-  nav{display:flex;gap:6px}
+  .brand{font-size:14px;font-weight:700;letter-spacing:1px;color:var(--neon);text-shadow:0 0 10px rgba(0,255,179,.55);white-space:nowrap}
+  .brand span{color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,.5);font-weight:400;font-size:10.5px}
+  nav{display:flex;gap:4px}
   nav button{
     background:transparent;border:1px solid var(--border);color:#7fa3c4;
-    padding:7px 14px;border-radius:4px;cursor:pointer;font-size:12.5px;letter-spacing:.4px;
+    padding:4px 10px;border-radius:3px;cursor:pointer;font-size:11px;letter-spacing:.4px;
     text-transform:uppercase;font-family:Consolas,monospace;
   }
   nav button:hover{border-color:var(--cyan);color:var(--cyan)}
   nav button.active{
     background:rgba(0,255,179,.08);border-color:var(--neon);color:var(--neon);
-    box-shadow:0 0 12px rgba(0,255,179,.35);text-shadow:0 0 8px rgba(0,255,179,.6);
+    box-shadow:0 0 10px rgba(0,255,179,.35);text-shadow:0 0 8px rgba(0,255,179,.6);
   }
-  .status-strip{margin-left:auto;display:flex;gap:14px;font-size:11.5px;align-items:center;flex-wrap:wrap;font-family:Consolas,monospace}
-  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+  .status-strip{margin-left:auto;display:flex;gap:11px;font-size:10.5px;align-items:center;flex-wrap:wrap;font-family:Consolas,monospace}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
   .dot.g{background:var(--neon);box-shadow:0 0 8px var(--neon)}
   .dot.a{background:var(--amber);box-shadow:0 0 8px var(--amber)}
   .dot.r{background:var(--red);box-shadow:0 0 8px var(--red)}
-  main{padding:16px 18px 40px;max-width:1560px;margin:0 auto}
+  main{padding:8px 12px 22px;max-width:1600px;margin:0 auto}
   .page{display:none}
   .page.active{display:block}
-  .grid{display:grid;gap:14px}
+  .grid{display:grid;gap:8px}
   .g2{grid-template-columns:1fr 1fr}
-  .g2-wide{grid-template-columns:1.3fr 1fr}
+  .g2-wide{grid-template-columns:1.25fr 1fr}
   @media(max-width:1050px){.g2,.g2-wide{grid-template-columns:1fr}}
   .panel{
     background:linear-gradient(180deg, var(--panel2), var(--panel));
     border:1px solid var(--border);
-    border-radius:6px;padding:14px 16px;
-    box-shadow:inset 0 0 24px rgba(0,229,255,.03);
+    border-radius:5px;padding:8px 10px;
+    box-shadow:inset 0 0 20px rgba(0,229,255,.03);
     position:relative;
   }
   .panel::before{
-    content:"";position:absolute;top:-1px;left:14px;width:46px;height:2px;
+    content:"";position:absolute;top:-1px;left:12px;width:38px;height:2px;
     background:var(--neon);box-shadow:0 0 8px var(--neon);
   }
   .panel h2{
-    margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:1.4px;
-    color:var(--cyan);border-bottom:1px solid var(--border2);padding-bottom:8px;
+    margin:0 0 6px;font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;
+    color:var(--cyan);border-bottom:1px solid var(--border2);padding-bottom:5px;
     font-family:Consolas,monospace;text-shadow:0 0 8px rgba(0,229,255,.35);
   }
-  table{width:100%;border-collapse:collapse;font-size:12.3px}
-  th,td{border:1px solid var(--border2);padding:5px 8px;text-align:right;white-space:nowrap}
+  table{width:100%;border-collapse:collapse;font-size:11.3px}
+  th,td{border:1px solid var(--border2);padding:2px 6px;text-align:right;white-space:nowrap}
   th{
     background:var(--head);color:var(--cyan);font-weight:600;text-align:center;
-    font-family:Consolas,monospace;letter-spacing:.3px;
+    font-family:Consolas,monospace;letter-spacing:.2px;font-size:10.8px;
   }
   td{background:rgba(7,14,24,.75)}
   td:first-child,th.strike{text-align:center;font-weight:700;color:#e6f6ff}
   tr.atm td{background:rgba(0,229,255,.07)!important}
   tbody tr:hover td{background:rgba(0,255,179,.05)}
-  .scroll{overflow:auto;max-height:470px;border:1px solid var(--border);border-radius:4px}
+  .scroll{overflow:auto;border:1px solid var(--border);border-radius:4px}
   .scroll table{border:0}
   .scroll th{position:sticky;top:0;z-index:2;background:#0c2136;box-shadow:0 1px 0 var(--cyan)}
   .grp-ce{background:#08243a!important;color:var(--cyan);text-shadow:0 0 6px rgba(0,229,255,.5)}
   .grp-pe{background:#2a0a20!important;color:var(--magenta);text-shadow:0 0 6px rgba(255,61,154,.5)}
+  .symcell{color:var(--cyan);font-family:Consolas,monospace;font-weight:700;text-align:center}
+  .plan td{text-align:center}
+  .plan td.symcell{text-align:center}
   /* badges */
-  .badge{display:inline-block;padding:2px 9px;border-radius:3px;font-size:11px;font-weight:700;
-    font-family:Consolas,monospace;letter-spacing:.4px;border:1px solid transparent}
+  .badge{display:inline-block;padding:1px 7px;border-radius:3px;font-size:10.3px;font-weight:700;
+    font-family:Consolas,monospace;letter-spacing:.3px;border:1px solid transparent}
   .b-green{background:rgba(0,255,179,.1);color:var(--neon);border-color:rgba(0,255,179,.45);text-shadow:0 0 7px rgba(0,255,179,.5)}
   .b-red{background:rgba(255,77,94,.1);color:var(--red);border-color:rgba(255,77,94,.45)}
   .b-amber{background:rgba(255,176,0,.1);color:var(--amber);border-color:rgba(255,176,0,.45)}
@@ -99,115 +102,107 @@
   /* buttons / inputs */
   button.action{
     background:rgba(0,255,179,.1);border:1px solid var(--neon);color:var(--neon);
-    padding:7px 16px;border-radius:4px;cursor:pointer;font-size:12.5px;
-    font-family:Consolas,monospace;letter-spacing:.6px;text-transform:uppercase;
+    padding:4px 12px;border-radius:3px;cursor:pointer;font-size:11px;
+    font-family:Consolas,monospace;letter-spacing:.5px;text-transform:uppercase;
     text-shadow:0 0 7px rgba(0,255,179,.5);
   }
-  button.action:hover{background:rgba(0,255,179,.2);box-shadow:0 0 12px rgba(0,255,179,.4)}
+  button.action:hover{background:rgba(0,255,179,.2);box-shadow:0 0 10px rgba(0,255,179,.4)}
   button.action.secondary{background:rgba(0,229,255,.07);border-color:var(--cyan);color:var(--cyan);
     text-shadow:0 0 7px rgba(0,229,255,.5)}
-  button.action.secondary:hover{box-shadow:0 0 12px rgba(0,229,255,.4)}
+  button.action.secondary:hover{box-shadow:0 0 10px rgba(0,229,255,.4)}
   button.action.danger{background:rgba(255,77,94,.08);border-color:var(--red);color:var(--red);
     text-shadow:0 0 7px rgba(255,77,94,.5)}
   input,select{
-    padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px;
+    padding:3px 6px;border:1px solid var(--border);border-radius:3px;font-size:11.5px;
     background:#06101c;color:var(--text);font-family:Consolas,monospace;
   }
   input:focus,select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.35)}
-  label.f{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0;color:#8fb4d4}
-  label.f span{flex:0 0 190px}
+  label.f{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0;color:#8fb4d4}
+  label.f span{flex:0 0 175px}
   label.f input{flex:1;text-align:right}
-  .kv{display:grid;grid-template-columns:170px 1fr;row-gap:7px;font-size:13px}
-  .kv .k{color:var(--muted);font-family:Consolas,monospace;font-size:12px}
+  .kv{display:grid;grid-template-columns:145px 1fr;row-gap:3px;font-size:11.5px;column-gap:8px}
+  .kv .k{color:var(--muted);font-family:Consolas,monospace;font-size:11px}
   .kv .v{font-weight:600;color:#e6f6ff}
   .muted{color:var(--muted)}
   .mono{font-family:Consolas,monospace}
-  /* signal card */
+  /* main signal card — compact horizontal, pinned at top */
   .signal-card{
-    border:1px solid var(--neon);border-radius:6px;
+    border:1px solid var(--neon);border-radius:5px;
     background:linear-gradient(180deg, rgba(0,255,179,.07), rgba(4,10,16,.9));
-    box-shadow:0 0 22px rgba(0,255,179,.18), inset 0 0 30px rgba(0,255,179,.05);
-    padding:18px;text-align:center;
+    box-shadow:0 0 18px rgba(0,255,179,.15), inset 0 0 26px rgba(0,255,179,.04);
+    padding:8px 12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
   }
   .signal-card.no{
     border-color:var(--amber);
     background:linear-gradient(180deg, rgba(255,176,0,.07), rgba(4,10,16,.9));
-    box-shadow:0 0 22px rgba(255,176,0,.15), inset 0 0 30px rgba(255,176,0,.04);
+    box-shadow:0 0 18px rgba(255,176,0,.13), inset 0 0 26px rgba(255,176,0,.04);
   }
   .signal-card.pe{
     border-color:var(--magenta);
     background:linear-gradient(180deg, rgba(255,61,154,.07), rgba(4,10,16,.9));
-    box-shadow:0 0 22px rgba(255,61,154,.18), inset 0 0 30px rgba(255,61,154,.05);
+    box-shadow:0 0 18px rgba(255,61,154,.15), inset 0 0 26px rgba(255,61,154,.04);
   }
-  .signal-big{font-size:36px;font-weight:800;letter-spacing:3px;color:var(--neon);margin:6px 0;
-    font-family:Consolas,monospace;text-shadow:0 0 18px rgba(0,255,179,.75)}
-  .signal-card.no .signal-big{color:var(--amber);text-shadow:0 0 18px rgba(255,176,0,.7)}
-  .signal-card.pe .signal-big{color:var(--magenta);text-shadow:0 0 18px rgba(255,61,154,.75)}
-  .signal-sub{font-size:14px;font-weight:700;margin-bottom:4px;color:#e6f6ff;font-family:Consolas,monospace}
+  .signal-left{min-width:210px;text-align:center;padding-right:14px;border-right:1px dashed var(--border)}
+  .signal-big{font-size:28px;font-weight:800;letter-spacing:2px;color:var(--neon);margin:2px 0;
+    font-family:Consolas,monospace;text-shadow:0 0 16px rgba(0,255,179,.75)}
+  .signal-card.no .signal-big{color:var(--amber);text-shadow:0 0 16px rgba(255,176,0,.7)}
+  .signal-card.pe .signal-big{color:var(--magenta);text-shadow:0 0 16px rgba(255,61,154,.75)}
+  .signal-sub{font-size:12.5px;font-weight:700;color:#e6f6ff;font-family:Consolas,monospace}
+  .signal-right{flex:1;min-width:320px}
   .reason{
-    font-size:12.3px;color:#9fc0dd;text-align:left;
-    background:rgba(4,10,16,.8);border:1px dashed var(--border);
-    border-radius:4px;padding:8px 10px;margin-top:10px;
+    font-size:11px;color:#9fc0dd;background:rgba(4,10,16,.8);
+    border:1px dashed var(--border);border-radius:3px;padding:4px 8px;margin-top:4px;line-height:1.45;
   }
-  .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px}
-  .plan .cell{background:rgba(8,20,33,.9);border:1px solid var(--border2);border-radius:4px;padding:8px 10px}
-  .plan .cell .lab{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-family:Consolas,monospace}
-  .plan .cell .val{font-size:15px;font-weight:700;margin-top:3px;color:#e6f6ff;font-family:Consolas,monospace}
-  .plan .cell.hi{border-color:rgba(0,229,255,.5)}
-  .plan .cell.hi .val{color:var(--cyan);text-shadow:0 0 8px rgba(0,229,255,.45)}
-  .plan .cell.risk{border-color:rgba(255,77,94,.5)}
-  .plan .cell.risk .val{color:var(--red)}
-  .plan .cell.profit{border-color:rgba(0,255,179,.5)}
-  .plan .cell.profit .val{color:var(--neon);text-shadow:0 0 8px rgba(0,255,179,.45)}
   /* watchlist rows */
   .wl-row{
-    display:flex;align-items:center;gap:10px;padding:7px 10px;
-    border:1px solid var(--border2);border-radius:4px;margin-bottom:6px;
+    display:flex;align-items:center;gap:8px;padding:3px 8px;
+    border:1px solid var(--border2);border-radius:3px;margin-bottom:4px;
     background:rgba(7,16,27,.85);
   }
   .wl-row:hover{border-color:rgba(0,229,255,.5)}
-  .wl-row .sym{font-weight:700;min-width:115px;color:var(--cyan);font-family:Consolas,monospace}
-  .wl-row .price{min-width:95px;text-align:right;font-family:Consolas,monospace}
-  .wl-row .acts{margin-left:auto;display:flex;gap:6px;align-items:center}
-  .wl-row input[type=checkbox]{width:16px;height:16px;accent-color:#00ffb3}
+  .wl-row .sym{font-weight:700;min-width:105px;color:var(--cyan);font-family:Consolas,monospace}
+  .wl-row .price{min-width:90px;text-align:right;font-family:Consolas,monospace}
+  .wl-row .acts{margin-left:auto;display:flex;gap:5px;align-items:center}
+  .wl-row input[type=checkbox]{width:14px;height:14px;accent-color:#00ffb3}
   .note{
-    font-size:12px;color:#8fb4d4;background:rgba(0,229,255,.05);
-    border-left:3px solid var(--cyan);padding:8px 10px;border-radius:0 4px 4px 0;margin-top:10px;
+    font-size:10.8px;color:#8fb4d4;background:rgba(0,229,255,.05);
+    border-left:2px solid var(--cyan);padding:4px 8px;border-radius:0 3px 3px 0;margin-top:6px;line-height:1.45;
   }
   .logs{
-    font-family:Consolas,monospace;font-size:12px;background:#020609;color:#9fe8c9;
-    border:1px solid var(--border2);border-radius:4px;padding:10px 12px;max-height:220px;overflow:auto;line-height:1.65;
+    font-family:Consolas,monospace;font-size:10.8px;background:#020609;color:#9fe8c9;
+    border:1px solid var(--border2);border-radius:3px;padding:6px 9px;max-height:132px;overflow:auto;line-height:1.5;
   }
   .logs .t{color:var(--cyan)}
   .logs .ok{color:var(--neon)}
   .logs .err{color:var(--red)}
   .logs .warn{color:var(--amber)}
   .section-title{
-    font-size:13px;font-weight:700;color:var(--neon);margin:20px 0 10px;
-    font-family:Consolas,monospace;letter-spacing:1.2px;text-transform:uppercase;
+    font-size:11.5px;font-weight:700;color:var(--neon);margin:10px 0 5px;
+    font-family:Consolas,monospace;letter-spacing:1px;text-transform:uppercase;
     text-shadow:0 0 8px rgba(0,255,179,.4);
   }
   .section-title:first-child{margin-top:0}
   footer{
-    padding:12px 18px;color:var(--muted);font-size:11.5px;border-top:1px solid var(--border2);
+    padding:8px 14px;color:var(--muted);font-size:10.5px;border-top:1px solid var(--border2);
     background:#04090f;text-align:center;font-family:Consolas,monospace;
   }
   .up{color:var(--neon);font-weight:700;text-shadow:0 0 7px rgba(0,255,179,.4)}
   .down{color:var(--red);font-weight:700}
   .toolbar{
-    display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
     background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.3);
-    border-radius:4px;padding:8px 12px;margin-bottom:12px;
+    border-radius:3px;padding:4px 9px;margin-bottom:6px;
   }
-  .toolbar .lab{color:var(--cyan);font-family:Consolas,monospace;font-size:12px;letter-spacing:.6px;text-transform:uppercase}
+  .toolbar .lab{color:var(--cyan);font-family:Consolas,monospace;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase}
   .pipeline{
-    display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:Consolas,monospace;font-size:11.5px;
+    display:flex;gap:4px;flex-wrap:wrap;align-items:center;font-family:Consolas,monospace;font-size:10.3px;
   }
   .pipeline .step{
     background:rgba(0,255,179,.06);border:1px solid rgba(0,255,179,.35);color:var(--neon);
-    padding:4px 8px;border-radius:3px;
+    padding:2px 6px;border-radius:3px;
   }
   .pipeline .arr{color:var(--cyan)}
+  .inline-select{display:flex;align-items:center;gap:6px;font-family:Consolas,monospace;font-size:10.5px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -234,27 +229,67 @@
 <!-- ============================ PAGE 1 — DASHBOARD ============================ -->
 <section id="p1" class="page active">
 
-  <div class="panel" style="margin-bottom:14px">
-    <h2>Auto-Analysis Pipeline — runs continuously for every enabled symbol</h2>
-    <div class="pipeline">
-      <span class="step">UPSTOX LIVE</span><span class="arr">→</span>
-      <span class="step">WATCHLIST FILTER (6 enabled)</span><span class="arr">→</span>
-      <span class="step">OPTION CHAIN ATM ±15</span><span class="arr">→</span>
-      <span class="step">ALL SYMBOLS → QLIB (batch, automatic)</span><span class="arr">→</span>
-      <span class="step">NORMAL STRATEGY + SMALL-PREMIUM STRATEGY</span><span class="arr">→</span>
-      <span class="step">STRIKE SELECTION</span><span class="arr">→</span>
-      <span class="step">RISK CHECK</span><span class="arr">→</span>
-      <span class="step">BUY CE / BUY PE / NO TRADE</span>
+  <!-- 1) MAIN SIGNAL CARD — moved to TOP -->
+  <div class="grid g2-wide" style="margin-bottom:8px">
+    <div class="signal-card" id="signalCard">
+      <div class="signal-left">
+        <div class="muted" style="letter-spacing:1.5px;font-family:Consolas,monospace;font-size:10px">MAIN SIGNAL</div>
+        <div class="signal-big" id="sigBig">BUY&nbsp;CE</div>
+        <div class="signal-sub" id="sigOption">NIFTY 24,800 CE · ₹54</div>
+        <div class="inline-select" style="justify-content:center;margin-top:4px">
+          symbol:
+          <select id="planSymbol">
+            <option>NIFTY</option><option>BANKNIFTY</option><option>SENSEX</option>
+            <option>FINNIFTY</option><option>MIDCPNIFTY</option><option>RELIANCE</option>
+          </select>
+        </div>
+      </div>
+      <div class="signal-right">
+        <div id="sigBadges" style="margin-bottom:3px">
+          <span class="badge pill-strategy">SMALL-PREMIUM QUICK-MOVE</span>
+          <span class="badge b-green">QLib: Bullish 0.78</span>
+          <span class="badge b-green">STATUS: ACTIVE</span>
+        </div>
+        <div class="reason" id="sigReason">
+          <b>Reason:</b> Bullish underlying momentum + Qlib confirmation (factor rank top decile) +
+          strong option activity (OI increasing, relative volume high) + acceptable spread, liquidity
+          and risk/reward after capital &amp; risk limits. · Signal only — no automatic orders.
+        </div>
+      </div>
     </div>
-    <div class="note">Every cycle (default: every few seconds during market hours) the engine loops over
-      <b>all enabled watchlist symbols</b>, fetches each ATM ±15 chain, stores it in SQLite and sends
-      <b>every symbol's data to Qlib automatically</b> — no button press required. Results land in the
-      Signal Board below and in per-symbol Trade Plans. Manual "Run Analysis" buttons exist only as an
-      optional override.</div>
+
+    <div class="panel">
+      <h2>Market / Selection</h2>
+      <div class="kv">
+        <div class="k">Upstox / Market</div><div class="v"><span class="badge b-green">CONNECTED</span> <span class="badge b-green">OPEN</span> ticks 2s ago · token till 15:45</div>
+        <div class="k">Watchlist</div><div class="v">6 enabled — auto-analysed every cycle</div>
+        <div class="k">Spot</div><div class="v" id="mktSpot">NIFTY <b>24,685.00</b> <span class="up">+0.42%</span></div>
+        <div class="k">Selected option</div><div class="v" id="mktOption">NIFTY 24,800 CE · 30-Oct-2026</div>
+        <div class="k">CE / PE</div><div class="v" id="mktType"><span class="badge b-green">CE (Call)</span></div>
+        <div class="k">Strategy type</div><div class="v" id="mktStrat">SMALL-PREMIUM QUICK-MOVE</div>
+        <div class="k">QLib analysis</div><div class="v" id="mktQLib">Bullish · OOS AUC 0.61 · PASSED</div>
+        <div class="k">Signal status</div><div class="v" id="mktStatus"><span class="badge b-green">ACTIVE — BUY CE</span></div>
+      </div>
+    </div>
   </div>
 
-  <!-- SIGNAL BOARD: one row per enabled symbol -->
-  <div class="panel" style="margin-bottom:14px">
+  <!-- 2) compact auto-pipeline strip -->
+  <div class="panel" style="margin-bottom:8px;padding:5px 10px">
+    <div class="pipeline">
+      <span class="step">UPSTOX LIVE</span><span class="arr">→</span>
+      <span class="step">WATCHLIST (6 enabled)</span><span class="arr">→</span>
+      <span class="step">CHAIN ATM ±15</span><span class="arr">→</span>
+      <span class="step">ALL SYMBOLS → QLIB (AUTO)</span><span class="arr">→</span>
+      <span class="step">NORMAL + SMALL-PREMIUM</span><span class="arr">→</span>
+      <span class="step">STRIKE SELECT</span><span class="arr">→</span>
+      <span class="step">RISK CHECK</span><span class="arr">→</span>
+      <span class="step">BUY CE / BUY PE / NO TRADE</span>
+      <span class="muted" style="margin-left:6px">— runs continuously, no button needed; manual Run Analysis is optional</span>
+    </div>
+  </div>
+
+  <!-- 3) SIGNAL BOARD: one row per enabled symbol -->
+  <div class="panel" style="margin-bottom:8px">
     <h2>Signal Board — all enabled watchlist symbols (auto-updated)</h2>
     <table>
       <tr>
@@ -263,207 +298,184 @@
         <th>Selected Option</th><th>Status</th><th>Time</th>
       </tr>
       <tr>
-        <td style="text-align:left;color:var(--cyan)" class="mono">NIFTY</td>
+        <td class="symcell">NIFTY</td>
         <td>24,685.00</td><td class="up">+0.42%</td><td><span class="badge b-green">Bullish</span></td><td>0.78</td>
         <td style="text-align:left"><span class="badge b-green">BUY CE</span></td>
         <td style="text-align:left"><span class="badge pill-strategy">SMALL-PREMIUM</span></td>
         <td>24,800 CE</td><td><span class="badge b-green">ACTIVE</span></td><td class="mono">09:41:12</td>
       </tr>
       <tr>
-        <td style="text-align:left" class="mono">BANKNIFTY</td>
+        <td class="symcell">BANKNIFTY</td>
         <td>56,420.00</td><td class="down">−0.31%</td><td><span class="badge b-amber">Neutral</span></td><td>0.54</td>
         <td style="text-align:left"><span class="badge b-amber">NO TRADE</span></td>
-        <td style="text-align:left">—</td>
-        <td>—</td><td><span class="badge b-gray">WAIT</span></td><td class="mono">09:41:12</td>
+        <td style="text-align:left">—</td><td>—</td><td><span class="badge b-gray">WAIT</span></td><td class="mono">09:41:12</td>
       </tr>
       <tr>
-        <td style="text-align:left" class="mono">SENSEX</td>
+        <td class="symcell">SENSEX</td>
         <td>80,915.22</td><td class="down">−0.28%</td><td><span class="badge b-red">Bearish</span></td><td>0.71</td>
         <td style="text-align:left"><span class="badge b-magenta">BUY PE</span></td>
         <td style="text-align:left"><span class="badge b-blue">NORMAL</span></td>
         <td>80,700 PE</td><td><span class="badge b-green">ACTIVE</span></td><td class="mono">09:41:12</td>
       </tr>
       <tr>
-        <td style="text-align:left" class="mono">FINNIFTY</td>
+        <td class="symcell">FINNIFTY</td>
         <td>26,140.00</td><td class="up">+0.11%</td><td><span class="badge b-amber">Neutral</span></td><td>0.49</td>
         <td style="text-align:left"><span class="badge b-amber">NO TRADE</span></td>
-        <td style="text-align:left">—</td>
-        <td>—</td><td><span class="badge b-gray">WAIT</span></td><td class="mono">09:41:12</td>
+        <td style="text-align:left">—</td><td>—</td><td><span class="badge b-gray">WAIT</span></td><td class="mono">09:41:12</td>
       </tr>
       <tr>
-        <td style="text-align:left" class="mono">MIDCPNIFTY</td>
+        <td class="symcell">MIDCPNIFTY</td>
         <td>12,875.00</td><td class="up">+0.58%</td><td><span class="badge b-green">Bullish</span></td><td>0.69</td>
         <td style="text-align:left"><span class="badge b-green">BUY CE</span></td>
         <td style="text-align:left"><span class="badge b-blue">NORMAL</span></td>
         <td>12,900 CE</td><td><span class="badge b-green">ACTIVE</span></td><td class="mono">09:41:12</td>
       </tr>
       <tr>
-        <td style="text-align:left" class="mono">RELIANCE</td>
+        <td class="symcell">RELIANCE</td>
         <td>1,412.50</td><td class="up">+0.22%</td><td><span class="badge b-amber">Neutral</span></td><td>0.52</td>
         <td style="text-align:left"><span class="badge b-amber">NO TRADE</span></td>
-        <td style="text-align:left">—</td>
-        <td>—</td><td><span class="badge b-gray">WAIT</span></td><td class="mono">09:41:12</td>
+        <td style="text-align:left">—</td><td>—</td><td><span class="badge b-gray">WAIT</span></td><td class="mono">09:41:12</td>
       </tr>
     </table>
-    <div class="note">Watchlist currently has <b>6 enabled symbols</b> — all are analysed automatically each
-      cycle. Disabled symbols (e.g. SBIN) are excluded in the service layer. With more symbols nothing
-      changes structurally: the board just gains rows, and each symbol keeps its own Trade Plan below.</div>
+    <div class="note">Disabled symbols (e.g. SBIN) are excluded in the service layer. More enabled symbols = more rows; the pipeline and tables below scale automatically.</div>
   </div>
 
-  <!-- toolbar controls which symbol's signal + plan is displayed -->
-  <div class="toolbar">
-    <span class="lab">Viewing signal &amp; trade plan for</span>
-    <select id="planSymbol">
-      <option>NIFTY</option><option>BANKNIFTY</option><option>SENSEX</option>
-      <option>FINNIFTY</option><option>MIDCPNIFTY</option><option>RELIANCE</option>
-    </select>
-    <span class="muted">— switch anytime; board above always shows all symbols side by side</span>
-  </div>
-
-  <div class="grid g2-wide">
-    <div class="panel signal-card" id="signalCard">
-      <div class="muted" style="letter-spacing:2px;font-family:Consolas,monospace">MAIN SIGNAL — <span id="sigSym">NIFTY</span></div>
-      <div class="signal-big" id="sigBig">BUY&nbsp;CE</div>
-      <div class="signal-sub" id="sigOption">NIFTY 24,800 CE · Premium ₹54</div>
-      <div id="sigBadges">
-        <span class="badge pill-strategy">SMALL-PREMIUM QUICK-MOVE</span>
-        <span class="badge b-green">QLib: Bullish 0.78</span>
-      </div>
-      <div class="reason" id="sigReason">
-        <b>Reason:</b> Bullish underlying momentum + Qlib confirmation (factor rank top decile) +
-        strong option activity (OI increasing, relative volume high) + acceptable spread,
-        liquidity and risk/reward after capital &amp; risk limits.
-        <br><b>Signal status:</b> ACTIVE · Generated 09:41:12 IST ·
-        Signal only — no orders are placed automatically.
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Market / Selection</h2>
-      <div class="kv">
-        <div class="k">Upstox connection</div><div class="v"><span class="badge b-green">CONNECTED</span> token till 15:45 IST</div>
-        <div class="k">Market / data status</div><div class="v"><span class="badge b-green">OPEN</span> ticks 2s ago (fresh)</div>
-        <div class="k">Watchlist (enabled)</div><div class="v">6 symbols · auto-analysed every cycle</div>
-        <div class="k">Current spot</div><div class="v" id="mktSpot">NIFTY <b>24,685.00</b> <span class="up">+0.42%</span></div>
-        <div class="k">Selected option</div><div class="v" id="mktOption">NIFTY 24,800 CE · 30-Oct-2026</div>
-        <div class="k">CE / PE</div><div class="v" id="mktType"><span class="badge b-green">CE (Call)</span></div>
-        <div class="k">Strategy type</div><div class="v" id="mktStrat">SMALL-PREMIUM QUICK-MOVE</div>
-        <div class="k">QLib analysis</div><div class="v" id="mktQLib">Bullish · OOS AUC 0.61 · validation PASSED</div>
-        <div class="k">Signal status</div><div class="v" id="mktStatus"><span class="badge b-green">ACTIVE — BUY CE</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel" style="margin-top:14px">
-    <h2>Trade Plan — <span id="planTitleSym">NIFTY</span></h2>
-    <div class="plan" id="planGrid">
-      <div class="cell hi"><div class="lab">Entry</div><div class="val">₹52 – ₹55</div></div>
-      <div class="cell"><div class="lab">Target 1</div><div class="val">₹62</div></div>
-      <div class="cell"><div class="lab">Target 2</div><div class="val">₹72</div></div>
-      <div class="cell"><div class="lab">Target 3</div><div class="val">₹85</div></div>
-      <div class="cell risk"><div class="lab">Stop Loss</div><div class="val">₹45</div></div>
-      <div class="cell hi"><div class="lab">Quantity</div><div class="val">260 (4 lots × 65)</div></div>
-      <div class="cell"><div class="lab">Lot size</div><div class="val">65 (NIFTY)</div></div>
-      <div class="cell"><div class="lab">Capital required</div><div class="val">₹14,040</div></div>
-      <div class="cell risk"><div class="lab">Maximum risk</div><div class="val">₹2,340</div></div>
-      <div class="cell profit"><div class="lab">Expected gross profit</div><div class="val">₹4,680</div></div>
-      <div class="cell"><div class="lab">Est. charges</div><div class="val">₹468</div></div>
-      <div class="cell profit"><div class="lab">Expected net profit</div><div class="val">₹4,212</div></div>
-      <div class="cell hi"><div class="lab">Risk / Reward (T2)</div><div class="val">1 : 2.0</div></div>
-      <div class="cell"><div class="lab">Limits check</div><div class="val" style="color:var(--neon)">✅ WITHIN LIMITS</div></div>
-    </div>
-    <div class="note">Quantity = lots × lot size, with lot size read from the Upstox instruments file
-      (<span class="mono">complete.json.gz</span>) in SQLite — never hardcoded. For NO TRADE symbols
-      the plan shows “—” and the reason card above explains why.</div>
-  </div>
-
-  <div class="grid g2" style="margin-top:14px">
-    <div class="panel">
-      <h2>Latest Signals</h2>
-      <table>
-        <tr><th style="text-align:left">Time</th><th>Symbol</th><th>Signal</th><th style="text-align:left">Strategy</th></tr>
-        <tr><td style="text-align:left" class="mono">09:41:12</td><td>NIFTY</td><td><span class="badge b-green">BUY CE</span></td><td style="text-align:left">Small-Premium Quick-Move</td></tr>
-        <tr><td style="text-align:left" class="mono">09:41:12</td><td>SENSEX</td><td><span class="badge b-magenta">BUY PE</span></td><td style="text-align:left">Normal Option Buy</td></tr>
-        <tr><td style="text-align:left" class="mono">09:41:12</td><td>MIDCPNIFTY</td><td><span class="badge b-green">BUY CE</span></td><td style="text-align:left">Normal Option Buy</td></tr>
-        <tr><td style="text-align:left" class="mono">09:41:12</td><td>BANKNIFTY</td><td><span class="badge b-amber">NO TRADE</span></td><td style="text-align:left">— (R/R below threshold)</td></tr>
-        <tr><td style="text-align:left" class="mono">09:41:12</td><td>FINNIFTY</td><td><span class="badge b-amber">NO TRADE</span></td><td style="text-align:left">— (QLib direction unclear)</td></tr>
-        <tr><td style="text-align:left" class="mono">09:41:12</td><td>RELIANCE</td><td><span class="badge b-amber">NO TRADE</span></td><td style="text-align:left">— (spread too wide)</td></tr>
+  <!-- 4) TRADE PLAN — one row per symbol, table format -->
+  <div class="panel" style="margin-bottom:8px">
+    <h2>Trade Plan — all symbols (row per symbol)</h2>
+    <div class="scroll" style="max-height:none">
+      <table class="plan">
+        <tr>
+          <th style="text-align:left">Symbol</th><th style="text-align:left">Strategy</th>
+          <th>Entry</th><th>T1</th><th>T2</th><th>T3</th><th>SL</th>
+          <th>Qty (lots × lot)</th><th>Lot size</th><th>Capital</th><th>Max risk</th>
+          <th>Gross profit</th><th>Charges</th><th>Net profit</th><th>R/R</th><th>Limits</th>
+        </tr>
+        <tr>
+          <td class="symcell">NIFTY</td>
+          <td style="text-align:left"><span class="badge pill-strategy">SMALL-PREMIUM</span></td>
+          <td>₹52–55</td><td>₹62</td><td>₹72</td><td>₹85</td><td style="color:var(--red)">₹45</td>
+          <td><b>260</b> (4×65)</td><td>65</td><td>₹14,040</td><td style="color:var(--red)">₹2,340</td>
+          <td style="color:var(--neon)">₹4,680</td><td>₹468</td><td style="color:var(--neon)"><b>₹4,212</b></td>
+          <td>1:2.0</td><td><span class="badge b-green">✅ OK</span></td>
+        </tr>
+        <tr>
+          <td class="symcell">BANKNIFTY</td>
+          <td style="text-align:left">— (NO TRADE)</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          <td>—</td><td>30</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          <td><span class="badge b-amber">WAIT</span></td>
+        </tr>
+        <tr>
+          <td class="symcell">SENSEX</td>
+          <td style="text-align:left"><span class="badge b-blue">NORMAL</span></td>
+          <td>₹94–98</td><td>₹110</td><td>₹124</td><td>₹145</td><td style="color:var(--red)">₹82</td>
+          <td><b>100</b> (5×20)</td><td>20</td><td>₹9,600</td><td style="color:var(--red)">₹1,400</td>
+          <td style="color:var(--neon)">₹2,800</td><td>₹280</td><td style="color:var(--neon)"><b>₹2,520</b></td>
+          <td>1:2.0</td><td><span class="badge b-green">✅ OK</span></td>
+        </tr>
+        <tr>
+          <td class="symcell">FINNIFTY</td>
+          <td style="text-align:left">— (NO TRADE)</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          <td>—</td><td>60</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          <td><span class="badge b-amber">WAIT</span></td>
+        </tr>
+        <tr>
+          <td class="symcell">MIDCPNIFTY</td>
+          <td style="text-align:left"><span class="badge b-blue">NORMAL</span></td>
+          <td>₹126–130</td><td>₹145</td><td>₹160</td><td>₹185</td><td style="color:var(--red)">₹112</td>
+          <td><b>240</b> (2×120)</td><td>120</td><td>₹30,720</td><td style="color:var(--red)">₹3,840</td>
+          <td style="color:var(--neon)">₹7,680</td><td>₹768</td><td style="color:var(--neon)"><b>₹6,912</b></td>
+          <td>1:2.0</td><td><span class="badge b-green">✅ OK</span></td>
+        </tr>
+        <tr>
+          <td class="symcell">RELIANCE</td>
+          <td style="text-align:left">— (NO TRADE)</td>
+          <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          <td>—</td><td>from file</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          <td><span class="badge b-amber">WAIT</span></td>
+        </tr>
       </table>
     </div>
-    <div class="panel">
-      <h2>Log Tail</h2>
-      <div class="logs">
-        <div><span class="t">09:41:12</span> <span class="ok">SIGNAL</span> NIFTY → BUY CE 24800 @ 54 (4 lots × 65)</div>
-        <div><span class="t">09:41:12</span> <span class="ok">SIGNAL</span> SENSEX → BUY PE 80700 @ 96 (5 lots × 20)</div>
-        <div><span class="t">09:41:11</span> <span class="ok">QLIB</span> batch inference OK — 6/6 symbols, avg conf 0.63</div>
-        <div><span class="t">09:41:10</span> <span class="ok">CHAIN</span> ATM±15 refreshed for NIFTY, BANKNIFTY, SENSEX, FINNIFTY, MIDCPNIFTY, RELIANCE</div>
-        <div><span class="t">09:41:08</span> <span class="warn">WS</span> quote refresh 2s ago — fresh</div>
-        <div><span class="t">09:40:58</span> <span class="ok">DB</span> market_data rows committed: 1,240</div>
-        <div><span class="t">09:30:14</span> <span class="err">API</span> 429 rate-limit — backoff + retry OK</div>
-      </div>
+    <div class="note">Qty = lots × lot size, lot sizes from Upstox <span class="mono">complete.json.gz</span>
+      (NIFTY 65 · SENSEX 20 · BANKNIFTY 30 · MIDCPNIFTY 120 · FINNIFTY 60) — never hardcoded.
+      NO TRADE rows show “—”. All limits checked per row against Max Risk / Max Capital / Max Lots.</div>
+  </div>
+
+  <!-- 5) logs -->
+  <div class="panel">
+    <h2>Log Tail</h2>
+    <div class="logs" style="max-height:110px">
+      <div><span class="t">09:41:12</span> <span class="ok">SIGNAL</span> NIFTY → BUY CE 24800 @ 54 (4 lots × 65) · SENSEX → BUY PE 80700 @ 96 (5 lots × 20)</div>
+      <div><span class="t">09:41:11</span> <span class="ok">QLIB</span> batch inference OK — 6/6 symbols, avg conf 0.63</div>
+      <div><span class="t">09:41:10</span> <span class="ok">CHAIN</span> ATM±15 refreshed for all 6 enabled symbols</div>
+      <div><span class="t">09:40:58</span> <span class="warn">WS</span> quote refresh 2s ago — fresh</div>
+      <div><span class="t">09:30:14</span> <span class="err">API</span> 429 rate-limit — backoff + retry OK</div>
     </div>
   </div>
 </section>
 
 <!-- ==================== PAGE 2 — WATCHLIST & OPTION CHAIN ==================== -->
 <section id="p2" class="page">
-  <div class="panel">
-    <h2>Watchlist</h2>
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <input type="text" placeholder="Search symbol (e.g. NIFTY, BANKNIFTY, SENSEX…)" style="flex:1">
-      <button class="action">+ Add</button>
+  <div class="grid g2-wide">
+    <div class="panel">
+      <h2>Watchlist</h2>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <input type="text" placeholder="Search symbol…" style="flex:1">
+        <button class="action">+ Add</button>
+      </div>
+      <div class="wl-row">
+        <input type="checkbox" checked><span class="sym">NIFTY</span><span class="muted">spot</span><span class="price">24,685.00</span>
+        <span class="badge b-green">Enabled</span>
+        <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
+      </div>
+      <div class="wl-row">
+        <input type="checkbox" checked><span class="sym">BANKNIFTY</span><span class="muted">spot</span><span class="price">56,420.00</span>
+        <span class="badge b-green">Enabled</span>
+        <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
+      </div>
+      <div class="wl-row">
+        <input type="checkbox" checked><span class="sym">SENSEX</span><span class="muted">spot</span><span class="price">80,915.22</span>
+        <span class="badge b-green">Enabled</span>
+        <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
+      </div>
+      <div class="wl-row">
+        <input type="checkbox" checked><span class="sym">FINNIFTY</span><span class="muted">spot</span><span class="price">26,140.00</span>
+        <span class="badge b-green">Enabled</span>
+        <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
+      </div>
+      <div class="wl-row">
+        <input type="checkbox" checked><span class="sym">MIDCPNIFTY</span><span class="muted">spot</span><span class="price">12,875.00</span>
+        <span class="badge b-green">Enabled</span>
+        <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
+      </div>
+      <div class="wl-row">
+        <input type="checkbox" checked><span class="sym">RELIANCE</span><span class="muted">spot</span><span class="price">1,412.50</span>
+        <span class="badge b-green">Enabled</span>
+        <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
+      </div>
+      <div class="wl-row" style="opacity:.65">
+        <input type="checkbox"><span class="sym">SBIN</span><span class="muted">spot</span><span class="price">812.40</span>
+        <span class="badge b-gray">Disabled — not analysed</span>
+        <span class="acts"><button class="action secondary">Enable</button><button class="action danger">Remove</button></span>
+      </div>
     </div>
-    <div class="wl-row">
-      <input type="checkbox" checked><span class="sym">NIFTY</span><span class="muted">spot</span><span class="price">24,685.00</span>
-      <span class="badge b-green">Enabled</span>
-      <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
-    </div>
-    <div class="wl-row">
-      <input type="checkbox" checked><span class="sym">BANKNIFTY</span><span class="muted">spot</span><span class="price">56,420.00</span>
-      <span class="badge b-green">Enabled</span>
-      <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
-    </div>
-    <div class="wl-row">
-      <input type="checkbox" checked><span class="sym">SENSEX</span><span class="muted">spot</span><span class="price">80,915.22</span>
-      <span class="badge b-green">Enabled</span>
-      <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
-    </div>
-    <div class="wl-row">
-      <input type="checkbox" checked><span class="sym">FINNIFTY</span><span class="muted">spot</span><span class="price">26,140.00</span>
-      <span class="badge b-green">Enabled</span>
-      <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
-    </div>
-    <div class="wl-row">
-      <input type="checkbox" checked><span class="sym">MIDCPNIFTY</span><span class="muted">spot</span><span class="price">12,875.00</span>
-      <span class="badge b-green">Enabled</span>
-      <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
-    </div>
-    <div class="wl-row">
-      <input type="checkbox" checked><span class="sym">RELIANCE</span><span class="muted">spot</span><span class="price">1,412.50</span>
-      <span class="badge b-green">Enabled</span>
-      <span class="acts"><button class="action secondary">Disable</button><button class="action danger">Remove</button></span>
-    </div>
-    <div class="wl-row" style="opacity:.65">
-      <input type="checkbox"><span class="sym">SBIN</span><span class="muted">spot</span><span class="price">812.40</span>
-      <span class="badge b-gray">Disabled — not analysed</span>
-      <span class="acts"><button class="action secondary">Enable</button><button class="action danger">Remove</button></span>
-    </div>
-  </div>
 
-  <div class="section-title">Lot sizes — source: Upstox <span class="mono">complete.json.gz</span> (stored in SQLite)</div>
-  <div class="panel">
-    <table>
-      <tr><th>Underlying</th><th>Lot Size</th><th>Strike Step</th><th style="text-align:left">Notes</th></tr>
-      <tr><td class="mono">NIFTY</td><td><b>65</b></td><td>50</td><td style="text-align:left" class="muted">Read from Upstox instruments file at download time</td></tr>
-      <tr><td class="mono">SENSEX</td><td><b>20</b></td><td>100</td><td style="text-align:left" class="muted">Read from Upstox instruments file at download time</td></tr>
-      <tr><td class="mono">BANKNIFTY</td><td><b>30</b></td><td>100</td><td style="text-align:left" class="muted">Read from Upstox instruments file at download time</td></tr>
-      <tr><td class="mono">MIDCPNIFTY</td><td><b>120</b></td><td>25</td><td style="text-align:left" class="muted">Read from Upstox instruments file at download time</td></tr>
-      <tr><td class="mono">FINNIFTY</td><td><b>60</b></td><td>50</td><td style="text-align:left" class="muted">Read from Upstox instruments file at download time</td></tr>
-      <tr><td class="mono">RELIANCE / others</td><td><b>from file</b></td><td>—</td><td style="text-align:left" class="muted">Any added symbol gets its lot size &amp; step from the same instruments file</td></tr>
-    </table>
-    <div class="note">All quantities = lots × lot size where lot size comes from the Upstox
-      instrument master. If Upstox revises a lot size, the app picks up the new value on the next
-      instruments refresh — nothing is hardcoded.</div>
+    <div class="panel">
+      <h2>Lot sizes — source: Upstox <span class="mono">complete.json.gz</span> (SQLite)</h2>
+      <table>
+        <tr><th>Underlying</th><th>Lot Size</th><th>Strike Step</th><th style="text-align:left">Notes</th></tr>
+        <tr><td class="mono">NIFTY</td><td><b>65</b></td><td>50</td><td style="text-align:left" class="muted">Read from instruments file at download time</td></tr>
+        <tr><td class="mono">SENSEX</td><td><b>20</b></td><td>100</td><td style="text-align:left" class="muted">Read from instruments file at download time</td></tr>
+        <tr><td class="mono">BANKNIFTY</td><td><b>30</b></td><td>100</td><td style="text-align:left" class="muted">Read from instruments file at download time</td></tr>
+        <tr><td class="mono">MIDCPNIFTY</td><td><b>120</b></td><td>25</td><td style="text-align:left" class="muted">Read from instruments file at download time</td></tr>
+        <tr><td class="mono">FINNIFTY</td><td><b>60</b></td><td>50</td><td style="text-align:left" class="muted">Read from instruments file at download time</td></tr>
+        <tr><td class="mono">RELIANCE / others</td><td><b>from file</b></td><td>—</td><td style="text-align:left" class="muted">Any added symbol gets lot &amp; step from same file</td></tr>
+      </table>
+      <div class="note">Quantities are always multiples of the contract lot size. If Upstox revises a
+        lot size, the next instruments refresh picks it up — nothing is hardcoded.</div>
+    </div>
   </div>
 
   <div class="section-title">Option Chain</div>
@@ -477,12 +489,13 @@
       <span>Spot: <b id="chSpot">24,685.00</b></span>
       <span>ATM: <b id="chATM">24,700</b></span>
       <span>Expiry: <select><option>30-Oct-2026</option><option>06-Nov-2026</option></select></span>
-      <span>Lot size: <b id="chLot">65</b></span>
+      <span>Lot: <b id="chLot">65</b></span>
       <span>Step: <b id="chStep">50</b></span>
-      <span>Range: <b>ATM ±15 strikes (31 rows)</b></span>
+      <span>Range: <b>ATM ±15 (31 rows)</b></span>
       <span class="badge b-green">● LIVE</span>
+      <span class="muted">All enabled symbols' chains are collected automatically — dropdown only picks the view.</span>
     </div>
-    <div class="scroll">
+    <div class="scroll" style="max-height:calc(100vh - 245px)">
       <table id="chainTable">
         <thead>
           <tr>
@@ -500,9 +513,7 @@
         <tbody></tbody>
       </table>
     </div>
-    <div class="note">All enabled watchlist symbols have their chains collected automatically in the
-      background each cycle — the dropdown above only chooses <b>which symbol's chain you are viewing</b>.
-      LQ = Last Traded Quantity. Greeks, bid/ask, OI and volume come live from Upstox (ATM ±15, CE+PE).</div>
+    <div class="note">LQ = Last Traded Quantity. Greeks, bid/ask, OI and volume come live from Upstox (ATM ±15, CE+PE) for enabled watchlist symbols only.</div>
   </div>
 </section>
 
@@ -513,35 +524,31 @@
     <div class="grid g2">
       <div class="kv">
         <div class="k">Model</div><div class="v">LightGBM (Qlib workflow)</div>
-        <div class="k">Last trained</div><div class="v mono">2026-09-29 09:15 IST</div>
-        <div class="k">Training samples</div><div class="v">48,320 (underlying + option-chain history)</div>
-        <div class="k">Features / factors</div><div class="v">42 (auto-generated by Qlib)</div>
-        <div class="k">Auto feed</div><div class="v"><span class="badge b-green">ON</span> all watchlist symbols pushed to Qlib every cycle</div>
+        <div class="k">Trained / samples</div><div class="v mono">2026-09-29 09:15 · 48,320 · 42 auto features</div>
+        <div class="k">Auto feed</div><div class="v"><span class="badge b-green">ON</span> all watchlist symbols pushed every cycle</div>
       </div>
       <div class="kv">
-        <div class="k">Out-of-sample AUC</div><div class="v">0.61</div>
-        <div class="k">IC (rank)</div><div class="v">0.04</div>
-        <div class="k">Backtest validation</div><div class="v"><span class="badge b-green">PASSED</span> walk-forward, OOS window</div>
-        <div class="k">Auto-retrain</div><div class="v">Daily 16:00 + on new data</div>
-        <div class="k">Confidence gate</div><div class="v">below gate → NO TRADE</div>
+        <div class="k">OOS AUC / IC</div><div class="v">0.61 / 0.04 · backtest <span class="badge b-green">PASSED</span> (walk-forward)</div>
+        <div class="k">Auto-retrain</div><div class="v">Daily 16:00 + on new data · below gate → NO TRADE</div>
+        <div class="k">Thresholds</div><div class="v">none hardcoded — decisions from Qlib output only</div>
       </div>
     </div>
-    <div class="toolbar" style="margin:12px 0 0">
+    <div class="toolbar" style="margin:6px 0 0">
       <span class="lab">Manual run (optional) / table filter</span>
       <select id="qlibFilter">
         <option value="ALL">ALL SYMBOLS (table view)</option>
         <option>NIFTY</option><option>BANKNIFTY</option><option>SENSEX</option>
         <option>FINNIFTY</option><option>MIDCPNIFTY</option><option>RELIANCE</option>
       </select>
-      <button class="action" id="qlibRunBtn">▶ Run Analysis Now (manual)</button>
+      <button class="action" id="qlibRunBtn">▶ Run Analysis Now</button>
       <button class="action secondary">↻ Retrain / Backtest</button>
-      <span class="muted" id="qlibRunStatus">Automatic analysis is already running for all symbols — this button is only an on-demand override.</span>
+      <span class="muted" id="qlibRunStatus">Automatic analysis already runs for all symbols — this button is an on-demand override.</span>
     </div>
   </div>
 
   <div class="section-title">Candidate Analysis — every CE/PE within ATM ±15, all symbols (auto-updated)</div>
   <div class="panel">
-    <div class="scroll">
+    <div class="scroll" style="max-height:calc(100vh - 250px)">
       <table id="qlibTable">
         <thead>
           <tr>
@@ -553,10 +560,8 @@
         <tbody></tbody>
       </table>
     </div>
-    <div class="note">The dropdown is only for <b>filtering the table</b> (or choosing a symbol for the
-      optional manual run). The pipeline itself always sends <b>all enabled symbols</b> to Qlib
-      automatically — rows below update by themselves. Qlib Analysis = model probability + factor
-      direction. Strategy Type = which engine ranks the candidate highest; Status =
+    <div class="note">Dropdown filters the table (or picks the symbol for the optional manual run) —
+      the pipeline itself always sends all enabled symbols to Qlib automatically. Status =
       SELECTED / CANDIDATE / REJECTED (with reason).</div>
   </div>
 </section>
@@ -569,25 +574,23 @@
       <label class="f"><span>API Key</span><input type="text" value="abc123XYZ..."></label>
       <label class="f"><span>API Secret</span><input type="password" value="••••••••••••"></label>
       <label class="f"><span>Redirect URL</span><input type="text" value="http://127.0.0.1:5000/upstox/callback"></label>
-      <div class="muted" style="font-size:12px">Default redirect URL shown — change only if your Upstox app is configured for it.</div>
-      <div class="kv" style="margin-top:10px">
-        <div class="k">Status</div><div class="v"><span class="badge b-green">CONNECTED</span> token valid until 15:45 IST</div>
+      <div class="kv" style="margin-top:6px">
+        <div class="k">Status</div><div class="v"><span class="badge b-green">CONNECTED</span> token until 15:45 IST</div>
         <div class="k">Instruments</div><div class="v">182,431 rows in SQLite (downloaded once)</div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:12px">
+      <div style="display:flex;gap:8px;margin-top:8px">
         <button class="action">CONNECT</button>
         <button class="action danger">DISCONNECT</button>
         <button class="action secondary">Refresh instruments</button>
       </div>
-      <div class="logs" style="margin-top:12px">
+      <div class="logs" style="margin-top:8px">
         <div><span class="t">09:02:11</span> <span class="ok">OAuth</span> browser opened → callback received → code OK</div>
-        <div><span class="t">09:02:14</span> <span class="ok">OAuth</span> access token saved to SQLite (broker table)</div>
-        <div><span class="t">09:02:40</span> <span class="ok">INSTR</span> complete.json.gz downloaded &amp; parsed → 182,431 rows</div>
+        <div><span class="t">09:02:14</span> <span class="ok">OAuth</span> access token saved (broker table)</div>
+        <div><span class="t">09:02:40</span> <span class="ok">INSTR</span> complete.json.gz parsed → 182,431 rows</div>
         <div><span class="t">09:02:41</span> <span class="ok">WS</span> market data socket connected (enabled watchlist only)</div>
       </div>
-      <div class="note">CONNECT flow: open Upstox auth in browser → receive callback on
-        <span class="mono">127.0.0.1:5000/upstox/callback</span> → exchange code for token →
-        auto-connect → auto-download instruments (file reused afterwards, not re-downloaded each run).</div>
+      <div class="note">CONNECT: open Upstox auth → callback on <span class="mono">127.0.0.1:5000/upstox/callback</span>
+        → code for token → auto-connect → auto-download instruments (reused afterwards, not re-downloaded each run).</div>
     </div>
 
     <div class="panel">
@@ -599,16 +602,16 @@
       <label class="f"><span>Maximum Capital (₹)</span><input type="number" value="100000"></label>
       <label class="f"><span>Minimum Risk/Reward</span><input type="number" step="0.1" value="2.0"></label>
       <label class="f"><span>Maximum Lots</span><input type="number" value="5"></label>
-      <div style="margin-top:12px"><button class="action">Save Settings</button></div>
-      <div class="note">These are <b>non-trading constraints only</b> (capital, risk, lots,
-        liquidity bounds). All directional decisions — CE vs PE, strike, entry/target/stop —
-        come from Qlib model output + live market evidence; otherwise → NO TRADE.</div>
+      <div style="margin-top:8px"><button class="action">Save Settings</button></div>
+      <div class="note">Non-trading constraints only (capital, risk, lots, liquidity bounds). All
+        directional decisions — CE vs PE, strike, entry/target/stop — come from Qlib model output +
+        live market evidence; otherwise → NO TRADE.</div>
     </div>
   </div>
 
-  <div class="panel" style="margin-top:14px">
+  <div class="panel" style="margin-top:8px">
     <h2>Logs / Errors (last 50)</h2>
-    <div class="logs">
+    <div class="logs" style="max-height:170px">
       <div><span class="t">09:41:12</span> <span class="ok">SIGNAL</span> NIFTY → BUY CE 24800 @ 54 — 4 lots × 65 = 260 qty</div>
       <div><span class="t">09:41:12</span> <span class="ok">SIGNAL</span> SENSEX → BUY PE 80700 @ 96 — 5 lots × 20 = 100 qty</div>
       <div><span class="t">09:41:11</span> <span class="ok">QLIB</span> batch inference — 6/6 symbols OK (automatic cycle)</div>
@@ -625,9 +628,9 @@
 </main>
 
 <footer>
-  Example UI layout (cyber theme) for review — 4 pages, data/table/card only, NO CHARTS, signal-only (no order execution).
-  All data flows to Qlib automatically for every enabled watchlist symbol; manual Run Analysis is optional.
-  Lot sizes &amp; quantities come from the Upstox instruments file (NIFTY 65 · SENSEX 20 · BANKNIFTY 30 · MIDCPNIFTY 120 · FINNIFTY 60).
+  Example UI layout (cyber theme, compact) — 4 pages, tables/cards only, NO CHARTS, signal-only (no order execution).
+  All data flows to Qlib automatically for every enabled symbol; manual Run Analysis optional.
+  Lot sizes &amp; quantities from the Upstox instruments file (NIFTY 65 · SENSEX 20 · BANKNIFTY 30 · MIDCPNIFTY 120 · FINNIFTY 60).
 </footer>
 
 <script>
@@ -654,17 +657,16 @@ var SYM = {
 var SYM_LIST = Object.keys(SYM);
 function rnd(seed){ var x = Math.sin(seed*127.1)*43758.5453; return x - Math.floor(x); }
 function fmt(n,d){ return Number(n).toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d}); }
-function premAt(cfg, i, isCE){      // example premium vs strike distance
+function premAt(cfg, i, isCE){
   var base = isCE ? cfg.ceB : cfg.peB;
-  var drift = i * base * 0.085;
-  var p = isCE ? base - drift : base + drift;
+  var p = isCE ? base - i*base*0.085 : base + i*base*0.085;
   return Math.max(1.05, p);
 }
 
 /* ---------- Page 2: option chain (switchable symbol) ---------- */
 function renderChain(sym){
   var cfg = SYM[sym];
-  document.getElementById('chSpot').textContent = fmt(cfg.spot, cfg.spot < 5000 ? 2 : 2);
+  document.getElementById('chSpot').textContent = fmt(cfg.spot, 2);
   document.getElementById('chATM').textContent  = cfg.atm.toLocaleString('en-IN');
   document.getElementById('chLot').textContent  = cfg.lot;
   document.getElementById('chStep').textContent = cfg.step;
@@ -672,7 +674,6 @@ function renderChain(sym){
   for (var i = -15; i <= 15; i++){
     var k = cfg.atm + i*cfg.step;
     var m = Math.abs(k - cfg.spot) / (cfg.step * 15);
-    var ceP = premAt(cfg, i, true), peP = premAt(cfg, i, false);
     function side(p, isCE, seed){
       var half = Math.max(0.05, p*0.006 + rnd(seed)*0.4);
       var oi = Math.max(5000, Math.round(80000 + rnd(seed+1)*3500000 - m*250000));
@@ -687,7 +688,7 @@ function renderChain(sym){
               v:Math.max(0.5, 12 - m*2.5),
               lq:Math.round(50 + rnd(seed+6)*1600)};
     }
-    var ce = side(ceP, true, k*3), pe = side(peP, false, k*3+99);
+    var ce = side(premAt(cfg,i,true), true, k*3), pe = side(premAt(cfg,i,false), false, k*3+99);
     var dp = cfg.dp;
     html += '<tr'+(k===cfg.atm?' class="atm"':'')+'><td>'+k.toLocaleString('en-IN')+'</td>'
       + '<td><b>'+fmt(ce.p,dp)+'</b></td><td>'+fmt(ce.bid,dp)+'</td><td>'+fmt(ce.ask,dp)+'</td><td>'+fmt(ce.spr,dp)+'</td>'
@@ -736,7 +737,7 @@ function renderQlib(){
         else { var why = ['QLib conf. low','R/R below min','Spread too wide','Stale data','Risk limit'][Math.floor(rnd(seed+12)*5)];
                st = 'REJ: ' + why; badge='b-gray'; }
         html += '<tr data-sym="'+sym+'">'
-          + '<td style="text-align:center;color:var(--cyan)" class="mono">'+sym+'</td>'
+          + '<td class="symcell">'+sym+'</td>'
           + '<td>'+k.toLocaleString('en-IN')+'</td><td><b>'+typ+'</b></td><td>₹'+fmt(p,cfg.dp)+'</td>'
           + '<td>'+qlib+'</td><td>'+mom+'</td><td>'+volq+'</td><td>'+oiChg+'</td>'
           + '<td>'+iv+'</td><td>'+delta+'</td><td>'+liq+'</td><td>'+act+'</td>'
@@ -764,85 +765,61 @@ document.getElementById('qlibRunBtn').addEventListener('click', function(){
 });
 renderQlib(); filterQlib();
 
-/* ---------- Page 1: per-symbol signal + trade plan ---------- */
+/* ---------- Page 1: signal card + market kv per symbol (card at top) ---------- */
 var PLANS = {
-  NIFTY: {signal:'BUY CE', cls:'', option:'NIFTY 24,800 CE · Premium ₹54',
+  NIFTY: {signal:'BUY CE', cls:'', option:'NIFTY 24,800 CE · ₹54',
     strat:'SMALL-PREMIUM QUICK-MOVE', qlibBadge:'QLib: Bullish 0.78', qlibBadgeCls:'b-green',
+    statusBadge:'STATUS: ACTIVE', statusBadgeCls:'b-green',
     spot:'NIFTY <b>24,685.00</b> <span class="up">+0.42%</span>',
     optionKV:'NIFTY 24,800 CE · 30-Oct-2026', type:'<span class="badge b-green">CE (Call)</span>',
     status:'<span class="badge b-green">ACTIVE — BUY CE</span>',
-    reason:'<b>Reason:</b> Bullish underlying momentum + Qlib confirmation (factor rank top decile) + strong option activity (OI increasing, relative volume high) + acceptable spread, liquidity and risk/reward after capital &amp; risk limits.<br><b>Signal status:</b> ACTIVE · 09:41:12 IST · Signal only — no automatic orders.',
-    cells:[['Entry','₹52 – ₹55','hi'],['Target 1','₹62',''],['Target 2','₹72',''],['Target 3','₹85',''],
-           ['Stop Loss','₹45','risk'],['Quantity','260 (4 lots × 65)','hi'],['Lot size','65 (NIFTY)',''],
-           ['Capital required','₹14,040',''],['Maximum risk','₹2,340','risk'],['Expected gross profit','₹4,680','profit'],
-           ['Est. charges','₹468',''],['Expected net profit','₹4,212','profit'],['Risk / Reward (T2)','1 : 2.0','hi'],
-           ['Limits check','✅ WITHIN LIMITS','']]},
+    reason:'<b>Reason:</b> Bullish underlying momentum + Qlib confirmation (factor rank top decile) + strong option activity (OI increasing, relative volume high) + acceptable spread, liquidity and risk/reward after capital &amp; risk limits. · Signal only — no automatic orders.'},
   BANKNIFTY: {signal:'NO TRADE', cls:'no', option:'—',
     strat:'—', qlibBadge:'QLib: Neutral 0.54 (below gate)', qlibBadgeCls:'b-amber',
+    statusBadge:'STATUS: WAIT', statusBadgeCls:'b-amber',
     spot:'BANKNIFTY <b>56,420.00</b> <span class="down">−0.31%</span>',
     optionKV:'—', type:'<span class="badge b-gray">—</span>',
     status:'<span class="badge b-amber">NO TRADE</span>',
-    reason:'<b>Reason:</b> Qlib direction unclear (confidence 0.54 below validation gate) · Risk/reward below configured minimum · Option activity not sufficiently confirmed.<br>## Wait for a stronger setup. · NO TRADE — signal only, no automatic orders.',
-    cells:[['Entry','—',''],['Target 1','—',''],['Target 2','—',''],['Target 3','—',''],
-           ['Stop Loss','—',''],['Quantity','—',''],['Lot size','30 (BANKNIFTY)',''],
-           ['Capital required','—',''],['Maximum risk','—',''],['Expected gross profit','—',''],
-           ['Est. charges','—',''],['Expected net profit','—',''],['Risk / Reward','—',''],
-           ['Limits check','—','']]},
-  SENSEX: {signal:'BUY PE', cls:'pe', option:'SENSEX 80,700 PE · Premium ₹96',
+    reason:'<b>Reason:</b> Qlib direction unclear (confidence 0.54 below validation gate) · Risk/reward below configured minimum · Option activity not sufficiently confirmed. ## Wait for a stronger setup. · Signal only, no automatic orders.'},
+  SENSEX: {signal:'BUY PE', cls:'pe', option:'SENSEX 80,700 PE · ₹96',
     strat:'NORMAL OPTION BUY', qlibBadge:'QLib: Bearish 0.71', qlibBadgeCls:'b-red',
+    statusBadge:'STATUS: ACTIVE', statusBadgeCls:'b-green',
     spot:'SENSEX <b>80,915.22</b> <span class="down">−0.28%</span>',
     optionKV:'SENSEX 80,700 PE · 30-Oct-2026', type:'<span class="badge b-magenta">PE (Put)</span>',
     status:'<span class="badge b-magenta">ACTIVE — BUY PE</span>',
-    reason:'<b>Reason:</b> Downside underlying momentum and Qlib factors align with the selected PE; sufficient liquidity, small spread, and risk/reward passes configured limits.<br><b>Signal status:</b> ACTIVE · 09:41:12 IST · Signal only — no automatic orders.',
-    cells:[['Entry','₹94 – ₹98','hi'],['Target 1','₹110',''],['Target 2','₹124',''],['Target 3','₹145',''],
-           ['Stop Loss','₹82','risk'],['Quantity','100 (5 lots × 20)','hi'],['Lot size','20 (SENSEX)',''],
-           ['Capital required','₹9,600',''],['Maximum risk','₹1,400','risk'],['Expected gross profit','₹2,800','profit'],
-           ['Est. charges','₹280',''],['Expected net profit','₹2,520','profit'],['Risk / Reward (T2)','1 : 2.0','hi'],
-           ['Limits check','✅ WITHIN LIMITS','']]},
+    reason:'<b>Reason:</b> Downside underlying momentum and Qlib factors align with the selected PE; sufficient liquidity, small spread, and risk/reward passes configured limits. · Signal only — no automatic orders.'},
   FINNIFTY: {signal:'NO TRADE', cls:'no', option:'—', strat:'—',
     qlibBadge:'QLib: Neutral 0.49', qlibBadgeCls:'b-amber',
+    statusBadge:'STATUS: WAIT', statusBadgeCls:'b-amber',
     spot:'FINNIFTY <b>26,140.00</b> <span class="up">+0.11%</span>',
     optionKV:'—', type:'<span class="badge b-gray">—</span>',
     status:'<span class="badge b-amber">NO TRADE</span>',
-    reason:'<b>Reason:</b> Qlib direction unclear · Option activity not sufficiently confirmed · Risk/reward below configured threshold.<br>## Wait for a stronger setup. · NO TRADE — signal only, no automatic orders.',
-    cells:[['Entry','—',''],['Target 1','—',''],['Target 2','—',''],['Target 3','—',''],
-           ['Stop Loss','—',''],['Quantity','—',''],['Lot size','60 (FINNIFTY)',''],
-           ['Capital required','—',''],['Maximum risk','—',''],['Expected gross profit','—',''],
-           ['Est. charges','—',''],['Expected net profit','—',''],['Risk / Reward','—',''],
-           ['Limits check','—','']]},
-  MIDCPNIFTY: {signal:'BUY CE', cls:'', option:'MIDCPNIFTY 12,900 CE · Premium ₹128',
+    reason:'<b>Reason:</b> Qlib direction unclear · Option activity not sufficiently confirmed · Risk/reward below configured threshold. ## Wait for a stronger setup. · Signal only, no automatic orders.'},
+  MIDCPNIFTY: {signal:'BUY CE', cls:'', option:'MIDCPNIFTY 12,900 CE · ₹128',
     strat:'NORMAL OPTION BUY', qlibBadge:'QLib: Bullish 0.69', qlibBadgeCls:'b-green',
+    statusBadge:'STATUS: ACTIVE', statusBadgeCls:'b-green',
     spot:'MIDCPNIFTY <b>12,875.00</b> <span class="up">+0.58%</span>',
     optionKV:'MIDCPNIFTY 12,900 CE · 30-Oct-2026', type:'<span class="badge b-green">CE (Call)</span>',
     status:'<span class="badge b-green">ACTIVE — BUY CE</span>',
-    reason:'<b>Reason:</b> Bullish underlying momentum + Qlib confirmation + strong option activity (relative volume and OI increase) + liquidity and risk/reward within limits.<br><b>Signal status:</b> ACTIVE · 09:41:12 IST · Signal only — no automatic orders.',
-    cells:[['Entry','₹126 – ₹130','hi'],['Target 1','₹145',''],['Target 2','₹160',''],['Target 3','₹185',''],
-           ['Stop Loss','₹112','risk'],['Quantity','240 (2 lots × 120)','hi'],['Lot size','120 (MIDCPNIFTY)',''],
-           ['Capital required','₹30,720',''],['Maximum risk','₹3,840','risk'],['Expected gross profit','₹7,680','profit'],
-           ['Est. charges','₹768',''],['Expected net profit','₹6,912','profit'],['Risk / Reward (T2)','1 : 2.0','hi'],
-           ['Limits check','✅ WITHIN LIMITS','']]},
+    reason:'<b>Reason:</b> Bullish underlying momentum + Qlib confirmation + strong option activity (relative volume and OI increase) + liquidity and risk/reward within limits. · Signal only — no automatic orders.'},
   RELIANCE: {signal:'NO TRADE', cls:'no', option:'—', strat:'—',
     qlibBadge:'QLib: Neutral 0.52', qlibBadgeCls:'b-amber',
+    statusBadge:'STATUS: WAIT', statusBadgeCls:'b-amber',
     spot:'RELIANCE <b>1,412.50</b> <span class="up">+0.22%</span>',
     optionKV:'—', type:'<span class="badge b-gray">—</span>',
     status:'<span class="badge b-amber">NO TRADE</span>',
-    reason:'<b>Reason:</b> Bid/ask spread too wide for reliable entry · Qlib confidence below gate · liquidity insufficient for target size.<br>## Wait for a stronger setup. · NO TRADE — signal only, no automatic orders.',
-    cells:[['Entry','—',''],['Target 1','—',''],['Target 2','—',''],['Target 3','—',''],
-           ['Stop Loss','—',''],['Quantity','—',''],['Lot size','from instruments (RELIANCE)',''],
-           ['Capital required','—',''],['Maximum risk','—',''],['Expected gross profit','—',''],
-           ['Est. charges','—',''],['Expected net profit','—',''],['Risk / Reward','—',''],
-           ['Limits check','—','']]}
+    reason:'<b>Reason:</b> Bid/ask spread too wide for reliable entry · Qlib confidence below gate · liquidity insufficient for target size. ## Wait for a stronger setup. · Signal only, no automatic orders.'}
 };
 function renderPlan(sym){
   var d = PLANS[sym];
   var card = document.getElementById('signalCard');
-  card.className = 'panel signal-card ' + d.cls;
-  document.getElementById('sigSym').textContent = sym;
+  card.className = 'signal-card ' + d.cls;
   document.getElementById('sigBig').innerHTML = d.signal.replace(' ','&nbsp;');
   document.getElementById('sigOption').textContent = d.option;
   document.getElementById('sigBadges').innerHTML =
     '<span class="badge '+(d.strat==='—'?'b-gray':'pill-strategy')+'">'+d.strat+'</span> '+
-    '<span class="badge '+d.qlibBadgeCls+'">'+d.qlibBadge+'</span>';
+    '<span class="badge '+d.qlibBadgeCls+'">'+d.qlibBadge+'</span> '+
+    '<span class="badge '+d.statusBadgeCls+'">'+d.statusBadge+'</span>';
   document.getElementById('sigReason').innerHTML = d.reason;
   document.getElementById('mktSpot').innerHTML = d.spot;
   document.getElementById('mktOption').textContent = d.optionKV;
@@ -850,10 +827,6 @@ function renderPlan(sym){
   document.getElementById('mktStrat').textContent = d.strat;
   document.getElementById('mktQLib').textContent = d.qlibBadge.replace('QLib: ','');
   document.getElementById('mktStatus').innerHTML = d.status;
-  document.getElementById('planTitleSym').textContent = sym;
-  document.getElementById('planGrid').innerHTML = d.cells.map(function(c){
-    return '<div class="cell '+c[2]+'"><div class="lab">'+c[0]+'</div><div class="val">'+c[1]+'</div></div>';
-  }).join('');
 }
 document.getElementById('planSymbol').addEventListener('change', function(){ renderPlan(this.value); });
 renderPlan('NIFTY');
