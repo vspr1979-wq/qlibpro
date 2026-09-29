@@ -10,7 +10,9 @@ from pathlib import Path
 # pyqlib records experiments through MLflow; allow its default file store.
 os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
 
-BASE_DIR = Path(__file__).resolve().parent
+# Repository root — this file lives in app/, so parent.parent is qlibpro/.
+# Runtime data (SQLite DB, qlib dataset, model) stays at qlibpro/data/.
+BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "optionsignal.db"
 QLIB_DATA_DIR = DATA_DIR / "qlib_data"

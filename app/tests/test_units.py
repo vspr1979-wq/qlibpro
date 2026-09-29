@@ -1,6 +1,6 @@
 """Engineering unit tests (development only — not part of the app runtime).
 
-Run:  python tests/test_units.py
+Run:  python app/tests/test_units.py
 """
 import math
 import shutil

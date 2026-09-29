@@ -3,7 +3,7 @@
 4 pages only (Dashboard / Watchlist & Option Chain / QLib Analysis / Settings),
 signals only (never places orders), real Upstox data + Microsoft Qlib.
 
-Run:  python app.py      (http://127.0.0.1:5000)
+Run:  python app/app.py    (http://127.0.0.1:5000)
 """
 from datetime import datetime
 

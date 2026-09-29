@@ -1,15 +1,15 @@
 # OptionSignal — Windows 11 (Python 3.11) dependency set (validated versions)
-# Microsoft Qlib is vendored IN THIS REPO under vendor/qlib/ (cloned from
-# https://github.com/microsoft/qlib.git, pinned commit be725493 — see
-# vendor/VENDOR_INFO.md). The line below installs it from that local copy;
-# requires a C++ build toolchain (Visual Studio Build Tools) for qlib's
-# two Cython extensions. Run pip from the repository root.
+# Microsoft Qlib is the cloned source committed at ./qlib (upstream
+# https://github.com/microsoft/qlib.git pinned at commit be725493 — provenance
+# and local patches in README "Microsoft Qlib"). The line below installs it
+# from that local copy; requires a C++ build toolchain (Visual Studio Build
+# Tools) for qlib's two Cython extensions. Run pip from the repository root.
 Flask==3.1.3
 requests==2.34.2
 websocket-client==1.9.2
 pandas==2.3.3
 numpy==2.4.6
-./vendor/qlib
+./qlib
 lightgbm==4.7.0
 mlflow==3.12.0
 scikit-learn==1.9.1
