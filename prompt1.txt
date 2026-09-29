@@ -1,0 +1,56 @@
+Do NOT hardcode fixed trading rules, indicator thresholds, strike-selection rules, or a manually designed BUY/SELL scoring formula.
+
+Feed live Upstox underlying + option-chain data and historical data into Microsoft Qlib. Let Qlib perform quantitative feature generation, factor analysis, model training/evaluation and strategy discovery to identify which option contracts and market conditions have predictive value.
+
+The application should dynamically determine:
+
+CE vs PE
+strike selection within the available option chain
+normal-premium vs small-premium opportunity
+entry/target/stop levels
+expected movement
+position quantity subject to risk/capital limits
+BUY CE / BUY PE / NO TRADE
+
+The application should not assume ATM, cheapest premium, highest volume, or any fixed indicator threshold.
+
+The strategy engine should use Qlib's quantitative output together with live market conditions and risk constraints. If Qlib/model confidence and market evidence are insufficient, return NO TRADE.
+
+The system should continuously learn/retrain from historical and newly collected market data and evaluate strategies using out-of-sample/backtesting validation before using them for live signals.
+
+Architecture you actually want
+                 UPSTOX
+                   │
+        Live Option Chain + Ticks
+                   │
+                   ▼
+             SQLite Market DB
+                   │
+                   ▼
+          Microsoft Qlib Engine
+                   │
+       ┌───────────┴───────────┐
+       │                       │
+ Feature/Factor Discovery   Model/Strategy
+       │                    Research
+       └───────────┬───────────┘
+                   ▼
+          Candidate Options
+                   │
+                   ▼
+       Dynamic Strategy Selection
+                   │
+          ┌────────┴────────┐
+          │                 │
+   Normal Premium     Small Premium
+      Opportunity        Opportunity
+          │                 │
+          └────────┬────────┘
+                   ▼
+              Risk Engine
+                   │
+             BUY CE / BUY PE
+                   │
+             or NO TRADE
+
+“Qlib analysis + hardcoded strategy rules decide the strike.” Instead, tell it to use Qlib for data-driven strategy discovery/modeling, while the application provides only the non-trading constraints such as capital, maximum risk, lot size, liquidity and broker limits.

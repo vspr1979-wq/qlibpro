@@ -1,0 +1,680 @@
+# BUILD A SIMPLE WINDOWS 11 PYTHON OPTION-BUYING SIGNAL APPLICATION
+
+Build a Python application for Windows 11 using Upstox and Microsoft QLib:
+
+https://github.com/microsoft/qlib
+
+IMPORTANT:
+
+* NO CHARTS.
+* NO TradingView.
+* Data/table/card UI only.
+* Option BUYING only.
+* Signal generation only. Do NOT place live orders.
+* Use real Upstox data.
+* Use SQLite for persistence.
+* Keep the UI simple with ONLY 4 pages.
+
+============================================================
+
+1. UI — ONLY 4 PAGES
+   ============================================================
+
+PAGE 1 — DASHBOARD
+
+Show:
+
+* Upstox connection status
+* Market/data status
+* Current Watchlist symbols
+* Current spot price
+* Selected option
+* CE/PE
+* Strategy type
+* Entry
+* Target 1
+* Target 2
+* Target 3
+* Stop Loss
+* Quantity
+* Expected profit
+* Maximum risk
+* QLib analysis
+* Signal status
+
+Main signal:
+
+```
+BUY CE
+BUY PE
+NO TRADE
+```
+
+PAGE 2 — WATCHLIST & OPTION CHAIN
+
+Watchlist section:
+
+```
+Search
+Add
+Remove
+Enable/Disable
+```
+
+The application MUST analyse ONLY symbols added to the Watchlist.
+
+For each enabled underlying:
+
+* Get current price
+* Find ATM
+* Get ATM ±15 strikes
+* Display CE and PE in a table
+
+Show:
+
+```
+Strike
+CE Premium
+CE OI
+CE Change OI
+CE Volume
+CE IV
+CE Delta
+CE Gamma
+CE Theta
+CE Vega
+
+PE Premium
+PE OI
+PE Change OI
+PE Volume
+PE IV
+PE Delta
+PE Gamma
+PE Theta
+PE Vega
+```
+
+Also show:
+
+```
+Bid
+Ask
+Spread
+Last Traded Quantity
+Lot Size
+Expiry
+```
+
+PAGE 3 — QLIB ANALYSIS
+
+For every Watchlist underlying:
+
+Use QLib to analyse the available market data and generate quantitative
+features/factors.
+
+Analyse every CE/PE candidate within ATM ±15.
+
+Show a simple table:
+
+```
+Strike
+CE/PE
+Premium
+QLib Analysis
+Momentum
+Volume
+OI Change
+IV
+Delta
+Liquidity
+Activity
+Expected Move
+Risk/Reward
+Strategy Type
+Status
+```
+
+QLib must be genuinely integrated into the analysis.
+
+Do not create a fake/random QLib score.
+
+PAGE 4 — SETTINGS
+
+Broker:
+
+```
+Upstox
+```
+
+Fields:
+
+```
+API Key
+API Secret
+Redirect URL
+```
+
+Default:
+
+```
+http://127.0.0.1:5000/upstox/callback
+```
+
+Buttons:
+
+```
+CONNECT
+DISCONNECT
+```
+
+After CONNECT:
+
+1. Open Upstox authentication in browser.
+2. Receive callback automatically.
+3. Extract authorization code.
+4. Exchange code for access token.
+5. Connect automatically.
+6. Download instruments automatically.
+
+Instrument file:
+
+https://assets.upstox.com/market-quote/instruments/exchange/complete.json.gz
+
+Store instruments in SQLite.
+
+Also provide simple strategy settings:
+
+```
+ATM Range = 15
+Small Premium Min
+Small Premium Max
+Maximum Risk
+Maximum Capital
+Minimum Risk/Reward
+Maximum Lots
+```
+
+============================================================
+2. DATA FLOW
+============
+
+Implement:
+
+```
+Upstox
+   ↓
+Live Market Data
+   ↓
+Watchlist Filter
+   ↓
+Option Chain
+   ↓
+ATM ±15
+   ↓
+QLib Analysis
+   ↓
+Strategy Analysis
+   ↓
+Strike Selection
+   ↓
+Risk Check
+   ↓
+BUY CE / BUY PE / NO TRADE
+```
+
+============================================================
+3. INSTRUMENT DOWNLOAD
+======================
+
+After successful Upstox authentication automatically download:
+
+https://assets.upstox.com/market-quote/instruments/exchange/complete.json.gz
+
+Parse and store in SQLite.
+
+Store useful fields:
+
+* instrument_key
+* trading_symbol
+* short_name
+* underlying
+* expiry
+* strike
+* option_type
+* lot_size
+* exchange
+* segment
+
+Do not download the complete file unnecessarily every time.
+
+============================================================
+4. LIVE DATA
+============
+
+Use Upstox live market data/WebSocket where supported.
+
+Maintain:
+
+* LTP
+* Last traded quantity
+* Volume
+* OI
+* Change OI
+* Bid
+* Ask
+* Greeks
+* Timestamp
+
+Only process instruments required for the enabled Watchlist.
+
+============================================================
+5. TWO STRATEGY TYPES
+=====================
+
+The application must analyse TWO types of option-buying opportunities.
+
+---
+
+## A. NORMAL OPTION BUYING
+
+Evaluate:
+
+* ITM
+* ATM
+* Near OTM
+
+Use:
+
+* Underlying direction
+* QLib analysis
+* Momentum
+* Volume
+* OI
+* Greeks
+* IV
+* Liquidity
+* Spread
+* Expected move
+* Risk/reward
+
+Do NOT automatically select ATM.
+
+---
+
+## B. SMALL-PREMIUM QUICK-MOVE
+
+Also search for relatively low-premium options.
+
+The purpose is to identify an option where a SMALL movement in premium can
+produce meaningful profit when a suitably sized position is possible.
+
+Example:
+
+```
+Buy premium = ₹10
+Sell premium = ₹13
+Move = ₹3
+```
+
+If quantity = 1,000:
+
+```
+Gross profit = ₹3 × 1,000
+             = ₹3,000
+```
+
+This is only an example.
+
+Calculate everything dynamically.
+
+Do NOT simply choose the cheapest option.
+
+Look for:
+
+* Low premium
+* High/abnormal activity
+* High relative volume
+* Last traded quantity
+* OI increase
+* Premium momentum
+* Underlying momentum
+* QLib confirmation
+* Good liquidity
+* Small spread
+* Suitable Greeks
+* Acceptable risk/reward
+
+IMPORTANT:
+
+High volume or high quantity alone does NOT mean BUY.
+
+The system must confirm the direction using the underlying, QLib,
+option behaviour and risk conditions.
+
+============================================================
+6. STRIKE SELECTION
+===================
+
+Analyse all strikes within:
+
+```
+ATM - 15
+through
+ATM + 15
+```
+
+For each strike analyse both CE and PE.
+
+The engine can select:
+
+```
+ITM
+ATM
+OTM
+Small-Premium OTM
+```
+
+Compare both strategy types.
+
+Do not always select:
+
+```
+ATM
+```
+
+and do not always select:
+
+```
+Cheapest Premium
+```
+
+Select a candidate only when the complete strategy passes.
+
+============================================================
+7. PROFIT / RISK CALCULATION
+============================
+
+For every candidate calculate:
+
+```
+Entry
+Target 1
+Target 2
+Target 3
+Stop Loss
+Lot Size
+Number of Lots
+Quantity
+Capital Required
+Maximum Loss
+Expected Gross Profit
+Estimated Charges
+Expected Net Profit
+Risk/Reward
+```
+
+Formula:
+
+```
+Profit =
+    (Exit Premium - Entry Premium) × Quantity
+```
+
+Quantity must be a valid multiple of the contract lot size.
+
+Do not exceed configured capital/risk limits.
+
+============================================================
+8. SIGNAL
+=========
+
+Possible result:
+
+```
+BUY CE
+BUY PE
+NO TRADE
+```
+
+Example:
+
+---
+
+NIFTY
+Spot: 24,685
+
+SIGNAL: BUY CE
+
+Option:
+NIFTY 24,800 CE
+
+Strategy:
+SMALL-PREMIUM QUICK-MOVE
+
+Premium:
+₹54
+
+Entry:
+₹52 - ₹55
+
+Target 1:
+₹62
+
+Target 2:
+₹72
+
+Target 3:
+₹85
+
+Stop Loss:
+₹45
+
+Quantity:
+Calculated dynamically
+
+QLib:
+Bullish
+
+Activity:
+High
+
+OI:
+Increasing
+
+Volume:
+High
+
+Risk/Reward:
+Calculated dynamically
+
+Reason:
+Bullish underlying momentum + QLib confirmation + strong option
+activity + suitable liquidity and risk/reward.
+
+---
+
+Another example:
+
+---
+
+BANKNIFTY
+Spot: 56,420
+
+SIGNAL: BUY PE
+
+Option:
+BANKNIFTY 56,400 PE
+
+Strategy:
+NORMAL OPTION BUY
+
+Premium:
+₹146
+
+Entry:
+₹144 - ₹148
+
+Target 1:
+₹165
+
+Target 2:
+₹185
+
+Target 3:
+₹210
+
+Stop Loss:
+₹125
+
+Quantity:
+Calculated dynamically
+
+QLib:
+Bearish
+
+Reason:
+Underlying downside momentum and QLib factors align with the
+selected PE and the option has sufficient liquidity.
+
+---
+
+NO TRADE example:
+
+---
+
+NIFTY
+
+SIGNAL:
+NO TRADE
+
+Reason:
+
+QLib direction unclear.
+Option activity not sufficiently confirmed.
+Risk/reward below configured threshold.
+
+## Wait for a stronger setup.
+
+============================================================
+9. WATCHLIST RULE
+=================
+
+This is mandatory.
+
+If Watchlist contains:
+
+```
+NIFTY
+BANKNIFTY
+```
+
+Analyse ONLY:
+
+```
+NIFTY
+BANKNIFTY
+```
+
+Do NOT analyse other symbols.
+
+The Watchlist restriction must be enforced in the backend/service layer,
+not just in the UI.
+
+============================================================
+10. DATABASE
+============
+
+Use SQLite.
+
+Minimum tables:
+
+```
+settings
+broker
+watchlist
+instruments
+market_data
+option_chain
+qlib_analysis
+signals
+signal_history
+logs
+```
+
+============================================================
+11. ERROR HANDLING
+==================
+
+Handle:
+
+* OAuth errors
+* Callback errors
+* API errors
+* WebSocket disconnect
+* Reconnection
+* Instrument download errors
+* Missing option data
+* Missing Greeks
+* QLib errors
+* Database errors
+* Stale market data
+
+Show clear status/error messages in the UI.
+
+============================================================
+12. FINAL REQUIREMENT
+=====================
+
+Keep the application SIMPLE.
+
+ONLY 4 UI PAGES:
+
+```
+1. DASHBOARD
+2. WATCHLIST & OPTION CHAIN
+3. QLIB ANALYSIS
+4. SETTINGS
+```
+
+Do NOT create separate pages for:
+
+```
+Strategy
+Risk
+Signals
+Logs
+Instruments
+Greeks
+```
+
+These should be displayed inside the four pages where appropriate.
+
+NO CHARTS.
+
+The complete processing pipeline must be:
+
+```
+UPSTOX
+   ↓
+WATCHLIST
+   ↓
+LIVE DATA
+   ↓
+OPTION CHAIN ATM ±15
+   ↓
+QLIB
+   ↓
+NORMAL OPTION STRATEGY
+   +
+SMALL-PREMIUM QUICK-MOVE STRATEGY
+   ↓
+STRIKE SELECTION
+   ↓
+RISK CHECK
+   ↓
+BUY CE / BUY PE / NO TRADE
+```
+
+Build the application as a working Windows 11 Python application, not a
+prototype with placeholder functions or mock market data.
