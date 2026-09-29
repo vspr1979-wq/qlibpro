@@ -195,15 +195,19 @@ def get_broker() -> dict:
 
 def save_broker(**kw) -> None:
     cur = get_broker()
-    cur.update({k: v for k, v in kw.items() if k in cur})
+    cur.update({k: v for k, v in kw.items() if k in cur and v is not None})
     cur["updated_at"] = iso()
     with _lock:
         c = _connect()
         c.execute(
             "INSERT INTO broker(id, api_key, api_secret, redirect_url, access_token, "
             "token_expiry, connected, updated_at) VALUES (1,:api_key,:api_secret,:redirect_url,"
-            ":access_token,:token_expiry,:connected,:updated_at)",
-            {**cur, "connected": int(cur.get("connected", 0))},
+            ":access_token,:token_expiry,:connected,:updated_at) "
+            "ON CONFLICT(id) DO UPDATE SET api_key=excluded.api_key, "
+            "api_secret=excluded.api_secret, redirect_url=excluded.redirect_url, "
+            "access_token=excluded.access_token, token_expiry=excluded.token_expiry, "
+            "connected=excluded.connected, updated_at=excluded.updated_at",
+            {**cur, "connected": int(cur.get("connected", 0) or 0)},
         )
         c.commit()
 

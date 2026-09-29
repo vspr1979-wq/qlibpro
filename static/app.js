@@ -334,16 +334,20 @@ async function fillQLibFilter() {
 async function loadSettings() {
   const d = await api("/api/settings");
   const s = d.settings, b = d.broker;
-  $("apiKey").value = b.api_key || "";
-  $("apiSecret").value = b.api_secret || "";
-  $("redirectUrl").value = b.redirect_url || "";
-  $("setAtmRange").value = s.atm_range;
-  $("setPremMin").value = s.small_premium_min;
-  $("setPremMax").value = s.small_premium_max;
-  $("setMaxRisk").value = s.max_risk;
-  $("setMaxCapital").value = s.max_capital;
-  $("setMinRr").value = s.min_rr;
-  $("setMaxLots").value = s.max_lots;
+  // Don't clobber fields the user is currently typing into (10s poller).
+  const typing = document.activeElement && document.activeElement.tagName === "INPUT";
+  if (!typing) {
+    $("apiKey").value = b.api_key || "";
+    $("apiSecret").value = b.api_secret || "";
+    $("redirectUrl").value = b.redirect_url || "";
+    $("setAtmRange").value = s.atm_range;
+    $("setPremMin").value = s.small_premium_min;
+    $("setPremMax").value = s.small_premium_max;
+    $("setMaxRisk").value = s.max_risk;
+    $("setMaxCapital").value = s.max_capital;
+    $("setMinRr").value = s.min_rr;
+    $("setMaxLots").value = s.max_lots;
+  }
   $("brokerStatus").innerHTML = b.connected
     ? `<span class="badge b-green">CONNECTED</span> token until ${esc(b.token_expiry || "?")}`
     : `<span class="badge b-red">NOT CONNECTED</span>`;
@@ -395,6 +399,15 @@ function wireSettings() {
       body: JSON.stringify(body) });
     return body;
   };
+
+  $("btnSaveCreds").addEventListener("click", async () => {
+    try {
+      await saveCreds();
+      $("credsMsg").textContent = "Saved ✔";
+      setTimeout(() => $("credsMsg").textContent = "", 2500);
+      refreshLogs();
+    } catch (e) { alert("Save failed: " + e.message); }
+  });
 
   $("btnConnect").addEventListener("click", async () => {
     try {

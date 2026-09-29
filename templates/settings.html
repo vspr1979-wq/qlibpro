@@ -22,10 +22,12 @@
       <div class="k">Status</div><div class="v" id="brokerStatus">—</div>
       <div class="k">Instruments</div><div class="v" id="brokerInstruments">—</div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:9px">
+    <div style="display:flex;gap:8px;margin-top:9px;flex-wrap:wrap">
       <button class="action" id="btnConnect">CONNECT</button>
+      <button class="action secondary" id="btnSaveCreds">Save credentials</button>
       <button class="action danger" id="btnDisconnect">DISCONNECT</button>
       <button class="action secondary" id="btnInstruments">Refresh instruments</button>
+      <span class="muted" id="credsMsg" style="align-self:center"></span>
     </div>
     <div class="logs" id="oauthLog" style="margin-top:9px"></div>
     <div class="note">CONNECT: browser auth → callback on
