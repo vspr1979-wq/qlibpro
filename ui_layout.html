@@ -6,9 +6,9 @@
 <title>OptionSignal — UI Layout (Cyber Theme, Compact)</title>
 <style>
   :root{
-    --bg:#04070d; --panel:#070e18; --panel2:#0a1524; --border:#123247; --border2:#0e2739;
+    --bg:#0d1624; --panel:#111f33; --panel2:#152740; --border:#21486a; --border2:#1a3a56;
     --neon:#00ffb3; --cyan:#00e5ff; --magenta:#ff3d9a; --amber:#ffb000; --red:#ff4d5e;
-    --text:#c9e6ff; --muted:#5f7d9c; --head:#0b1d2e;
+    --text:#c9e6ff; --muted:#7d9ab8; --head:#122b45;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
@@ -24,7 +24,7 @@
   }
   /* ---------- Header / Nav ---------- */
   header{
-    background:linear-gradient(180deg,#06111d,#04090f);
+    background:linear-gradient(180deg,#0f1e33,#0b1727);
     border-bottom:1px solid var(--neon);
     box-shadow:0 0 14px rgba(0,255,179,.15);
     padding:5px 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
@@ -77,15 +77,15 @@
     background:var(--head);color:var(--cyan);font-weight:600;text-align:center;
     font-family:Consolas,monospace;letter-spacing:.2px;font-size:10.8px;
   }
-  td{background:rgba(7,14,24,.75)}
+  td{background:rgba(16,30,49,.8)}
   td:first-child,th.strike{text-align:center;font-weight:700;color:#e6f6ff}
   tr.atm td{background:rgba(0,229,255,.07)!important}
   tbody tr:hover td{background:rgba(0,255,179,.05)}
   .scroll{overflow:auto;border:1px solid var(--border);border-radius:4px}
   .scroll table{border:0}
-  .scroll th{position:sticky;top:0;z-index:2;background:#0c2136;box-shadow:0 1px 0 var(--cyan)}
-  .grp-ce{background:#08243a!important;color:var(--cyan);text-shadow:0 0 6px rgba(0,229,255,.5)}
-  .grp-pe{background:#2a0a20!important;color:var(--magenta);text-shadow:0 0 6px rgba(255,61,154,.5)}
+  .scroll th{position:sticky;top:0;z-index:2;background:#14314f;box-shadow:0 1px 0 var(--cyan)}
+  .grp-ce{background:#0d3352!important;color:var(--cyan);text-shadow:0 0 6px rgba(0,229,255,.5)}
+  .grp-pe{background:#3a1230!important;color:var(--magenta);text-shadow:0 0 6px rgba(255,61,154,.5)}
   .symcell{color:var(--cyan);font-family:Consolas,monospace;font-weight:700;text-align:center}
   .plan td{text-align:center}
   .plan td.symcell{text-align:center}
@@ -114,7 +114,7 @@
     text-shadow:0 0 7px rgba(255,77,94,.5)}
   input,select{
     padding:3px 6px;border:1px solid var(--border);border-radius:3px;font-size:11.5px;
-    background:#06101c;color:var(--text);font-family:Consolas,monospace;
+    background:#0c1a2c;color:var(--text);font-family:Consolas,monospace;
   }
   input:focus,select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.35)}
   label.f{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0;color:#8fb4d4}
@@ -150,14 +150,14 @@
   .signal-sub{font-size:12.5px;font-weight:700;color:#e6f6ff;font-family:Consolas,monospace}
   .signal-right{flex:1;min-width:320px}
   .reason{
-    font-size:11px;color:#9fc0dd;background:rgba(4,10,16,.8);
+    font-size:11px;color:#9fc0dd;background:rgba(9,18,30,.85);
     border:1px dashed var(--border);border-radius:3px;padding:4px 8px;margin-top:4px;line-height:1.45;
   }
   /* watchlist rows */
   .wl-row{
     display:flex;align-items:center;gap:8px;padding:3px 8px;
     border:1px solid var(--border2);border-radius:3px;margin-bottom:4px;
-    background:rgba(7,16,27,.85);
+    background:rgba(14,27,45,.9);
   }
   .wl-row:hover{border-color:rgba(0,229,255,.5)}
   .wl-row .sym{font-weight:700;min-width:105px;color:var(--cyan);font-family:Consolas,monospace}
@@ -169,7 +169,7 @@
     border-left:2px solid var(--cyan);padding:4px 8px;border-radius:0 3px 3px 0;margin-top:6px;line-height:1.45;
   }
   .logs{
-    font-family:Consolas,monospace;font-size:10.8px;background:#020609;color:#9fe8c9;
+    font-family:Consolas,monospace;font-size:10.8px;background:#081320;color:#9fe8c9;
     border:1px solid var(--border2);border-radius:3px;padding:6px 9px;max-height:132px;overflow:auto;line-height:1.5;
   }
   .logs .t{color:var(--cyan)}
@@ -184,7 +184,7 @@
   .section-title:first-child{margin-top:0}
   footer{
     padding:8px 14px;color:var(--muted);font-size:10.5px;border-top:1px solid var(--border2);
-    background:#04090f;text-align:center;font-family:Consolas,monospace;
+    background:#0d1929;text-align:center;font-family:Consolas,monospace;
   }
   .up{color:var(--neon);font-weight:700;text-shadow:0 0 7px rgba(0,255,179,.4)}
   .down{color:var(--red);font-weight:700}
@@ -209,6 +209,7 @@
 
 <header>
   <div class="brand">◉ OPTIONSIGNAL <span>// UPSTOX × QLIB</span></div>
+  <span class="badge b-green" title="UI design locked as final — changes only via explicit request">LOCKED · FINAL UI v1.0</span>
   <nav>
     <button class="active" data-page="p1">1. Dashboard</button>
     <button data-page="p2">2. Watchlist &amp; Option Chain</button>
@@ -533,22 +534,22 @@
         <div class="k">Thresholds</div><div class="v">none hardcoded — decisions from Qlib output only</div>
       </div>
     </div>
-    <div class="toolbar" style="margin:6px 0 0">
-      <span class="lab">Manual run (optional) / table filter</span>
+  </div>
+
+  <div class="section-title">Candidate Analysis — every CE/PE within ATM ±15, all symbols (auto-updated)</div>
+  <div class="panel">
+    <div class="toolbar">
+      <span class="lab">Candidate Analysis — symbol</span>
       <select id="qlibFilter">
         <option value="ALL">ALL SYMBOLS (table view)</option>
         <option>NIFTY</option><option>BANKNIFTY</option><option>SENSEX</option>
         <option>FINNIFTY</option><option>MIDCPNIFTY</option><option>RELIANCE</option>
       </select>
-      <button class="action" id="qlibRunBtn">▶ Run Analysis Now</button>
+      <button class="action" id="qlibRunBtn">▶ Run Analysis Now (manual, optional)</button>
       <button class="action secondary">↻ Retrain / Backtest</button>
       <span class="muted" id="qlibRunStatus">Automatic analysis already runs for all symbols — this button is an on-demand override.</span>
     </div>
-  </div>
-
-  <div class="section-title">Candidate Analysis — every CE/PE within ATM ±15, all symbols (auto-updated)</div>
-  <div class="panel">
-    <div class="scroll" style="max-height:calc(100vh - 250px)">
+    <div class="scroll" style="max-height:calc(100vh - 285px)">
       <table id="qlibTable">
         <thead>
           <tr>
@@ -628,8 +629,9 @@
 </main>
 
 <footer>
-  Example UI layout (cyber theme, compact) — 4 pages, tables/cards only, NO CHARTS, signal-only (no order execution).
-  All data flows to Qlib automatically for every enabled symbol; manual Run Analysis optional.
+  Example UI layout — <b>LOCKED AS FINAL (v1.0)</b> — 4 pages, tables/cards only, NO CHARTS, signal-only (no order execution).
+  Production build follows prompt.txt / prompt1.txt: real Upstox data + Microsoft Qlib, SQLite, no mock data,
+  no hardcoded rules or thresholds — all analysis automatic; manual Run Analysis optional.
   Lot sizes &amp; quantities from the Upstox instruments file (NIFTY 65 · SENSEX 20 · BANKNIFTY 30 · MIDCPNIFTY 120 · FINNIFTY 60).
 </footer>
 
