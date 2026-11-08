@@ -174,7 +174,7 @@ body{background:var(--bg);color:var(--cream);font-family:'IBM Plex Mono',monospa
   </div>
   <div id="tickertape"><span class="tag">NSE·BSE</span><div style="overflow:hidden;flex:1"><div id="ttrack"></div></div></div>
   <div id="grid">
-    <div class="center panel"><div class="ph"><span class="t">THE FLOOR · QLIB CORE</span><span class="htabs"><span class="on">DESK</span><span>FLOWS</span><span>FLOOR</span></span><span class="meta">19 UNITS · <span id="hive_seen">0</span> SEEN</span></div><div class="pb"><div class="hivetitle"><span class="k">QLIB AGENT DESK</span><b>QLIBPRO</b></div><canvas id="hive"></canvas></div></div>
+    <div class="center panel"><div class="ph"><span class="t">THE FLOOR · PRO CORE</span><span class="htabs"><span class="on">DESK</span><span>FLOWS</span><span>FLOOR</span></span><span class="meta">19 UNITS · <span id="hive_seen">0</span> SEEN</span></div><div class="pb"><div class="hivetitle"><span class="k">PRO AGENT DESK</span><b>QLIBPRO</b></div><canvas id="hive"></canvas></div></div>
     <div class="cockpit">
       <div class="panel"><div class="ph"><span class="t">DESK SIGNALS</span><span class="meta">EVERY ORDER / SIG</span></div><div class="pb"><div class="tape" id="tape"></div></div></div>
       <div class="panel"><div class="ph"><span class="t">OPEN POSITIONS</span><span class="meta"><span id="op_count">0</span> OPEN</span></div><div class="pb" style="overflow:auto"><table class="postbl"><thead><tr><th>SYMBOL</th><th>ENTRY</th><th>QTY</th><th>PNL</th></tr></thead><tbody id="postbody"></tbody></table></div></div>
@@ -697,7 +697,7 @@ setInterval(paintThr,1500);
 const hC=$('hive'),hx=hC.getContext('2d');
 let HW=0,HH=0,SIZE=40;
 const CELLDEF=[
-  {t:'QLIB CORE',role:'core'},
+  {t:'PRO CORE',role:'core'},
   {t:'RISK',role:'risk',col:'#0e9e6e'},{t:'ROUTER',role:'risk',col:'#14b88a'},{t:'EXEC',role:'risk',col:'#0e9e6e'},
   {t:'RADAR',role:'res',col:'#3dffb0'},{t:'SNIPER',role:'res',col:'#ff5d6c'},{t:'MEMORY',role:'res',col:'#14f195'},{t:'SIGNAL',role:'res',col:'#3dffb0'},{t:'FEED',role:'res',col:'#7cffcf'},{t:'HEDGE',role:'risk',col:'#14b88a'},
   {t:'UNIT 01',role:'sn',col:'#7cffcf'},{t:'UNIT 02',role:'sn',col:'#14f195'},{t:'UNIT 03',role:'sn',col:'#7cffcf'},{t:'UNIT 04',role:'sn',col:'#14f195'},
@@ -718,13 +718,13 @@ function buildEdges(){
   edges=[];const B=cellByName;
   const E=(a,b,w)=>{if(B[a]&&B[b])edges.push([B[a],B[b],w||1,R(0,6.283)]);};
   const risk=['RISK','ROUTER','EXEC','HEDGE'],res=['RADAR','SNIPER','MEMORY','SIGNAL','FEED'],sn=['UNIT 01','UNIT 02','UNIT 03','UNIT 04','UNIT 05','UNIT 06','UNIT 07','UNIT 08'];
-  cells.forEach(c=>{if(c.t!=='QLIB CORE')E('QLIB CORE',c.t,1.1);});
+  cells.forEach(c=>{if(c.t!=='PRO CORE')E('PRO CORE',c.t,1.1);});
   risk.forEach((r,i)=>{E(r,risk[(i+1)%risk.length],1);E(r,risk[(i+2)%risk.length],.6);});
   res.forEach((r,i)=>{E(r,res[(i+1)%res.length],.8);E(r,res[(i+2)%res.length],.5);});
   res.forEach(r=>risk.forEach(rk=>{if(Math.random()<.6)E(r,rk,.55);}));
   sn.forEach((s,i)=>{E(s,sn[(i+1)%sn.length],.7);E(s,sn[(i+3)%sn.length],.45);E(s,sn[(i+4)%sn.length],.35);E(s,res[i%res.length],.6);E(s,res[(i+2)%res.length],.5);E(s,res[(i+3)%res.length],.4);E(s,risk[i%risk.length],.5);});
-  E('VAULT','QLIB CORE',1);res.forEach(r=>E('VAULT',r,.6));risk.forEach(r=>E('VAULT',r,.5));sn.forEach(s=>E('VAULT',s,.5));
-  const allN=cells.map(c=>c.t).filter(t=>t!=='QLIB CORE');
+  E('VAULT','PRO CORE',1);res.forEach(r=>E('VAULT',r,.6));risk.forEach(r=>E('VAULT',r,.5));sn.forEach(s=>E('VAULT',s,.5));
+  const allN=cells.map(c=>c.t).filter(t=>t!=='PRO CORE');
   for(let k=0;k<160;k++){const a=pick(allN),b=pick(allN);if(a!==b)E(a,b,R(.2,.5));}
 }
 function spawnP(){if(!edges.length)return;const e=pick(edges),d=Math.random()>.5;particles.push({a:d?e[0]:e[1],b:d?e[1]:e[0],t:0,sp:R(.012,.024),off:e[3]||0});}
@@ -821,9 +821,9 @@ function drawHive(){
       hx.beginPath();hx.arc(c.x,c.y,lr,0,7);hx.fillStyle='#08160f';hx.fill();
       hx.strokeStyle='#14f195';hx.lineWidth=2.2;hx.shadowColor='#14f195';hx.shadowBlur=16;hx.stroke();hx.shadowBlur=0;
       hx.fillStyle='#7cffcf';hx.font='700 '+Math.round(lr*1.05)+'px "IBM Plex Mono", monospace';hx.textAlign='center';hx.textBaseline='middle';
-      hx.fillText('Q',c.x,c.y+1);
+      hx.fillText('P',c.x,c.y+1);
       hx.textBaseline='alphabetic';
-      hx.fillStyle='#a6ffd9';hx.font='700 9px "IBM Plex Mono"';hx.fillText('QLIB CORE',c.x,c.y+rad+13);
+      hx.fillStyle='#a6ffd9';hx.font='700 9px "IBM Plex Mono"';hx.fillText('PRO CORE',c.x,c.y+rad+13);
     }else if(c.role==='mem'){
       hx.save();hx.shadowColor='#0e9e6e';hx.shadowBlur=10;
       hx.fillStyle='#7cffcf';hx.font='700 11px "Azeret Mono", monospace';hx.textAlign='center';
