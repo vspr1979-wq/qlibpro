@@ -1,1 +1,46 @@
-test
+# QlibPro — Indian Algo Trading Desk
+
+Single-page, all-in-one **algo trading terminal for Indian markets (NSE/BSE · CASH + F&O)**, in the spirit of the desk-style screenshot referenced in `WhatsApp Image 2026-11-08 at 7.47.44 AM.jpeg` — watchlist, candle chart with EMA overlays + signal markers, AI signal scan, depth ladder, order ticket, live positions P&L, paper-equity curve, market breadth, risk guards and a HALT kill-switch — **all on one page**, connected to the **Groww Trading API**.
+
+> **Status: v0.1 draft example** — the feed is **simulated** (clearly badged "SIM FEED"); orders run in **paper mode** by default. Live NSE order routing via Groww is wired and gated behind an explicit token + kill-switch. See `docs/PLAN.md` for the full draft plan, architecture, Groww API notes, safety model and roadmap.
+
+## Quickstart
+
+```bash
+npm install
+npm run build
+npm start          # → http://localhost:8787   (bind 0.0.0.0, port from env PORT)
+```
+
+Dev mode with hot reload (UI on :5173, API proxied to :8787):
+
+```bash
+npm run server     # terminal 1 — API/static server
+npm run dev        # terminal 2 — Vite dev server
+```
+
+## What you get out of the box
+
+- **PAPER mode (default)**: ₹10,00,000 paper capital, instant fills at simulated LTP ± slippage, positions/orders persisted in `localStorage`, estimated Indian charges (brokerage/STT/txn/GST/stamp/SEBI), session equity curve, win rate, kill-switch with ₹25,000 daily-loss auto-halt.
+- **GROWW LIVE mode**: click the gear → paste your Groww **Access Token** (groww.in → Profile → Settings → Trading APIs → Access Token; expires daily 06:00 IST; requires the Trading API subscription). The server validates it against the real API, keeps it in **memory only**, and routes `BUY/SELL` orders to `POST /v1/order/create` with unique `order_reference_id`. Market data remains simulated until Phase 1 of the roadmap (`docs/PLAN.md`).
+- **Honest labels everywhere**: SIM badges, token-expiry notes, no silent live orders.
+
+## Repo layout
+
+```
+docs/PLAN.md        First-draft plan (architecture, Groww API map, risk model, roadmap, open questions)
+server.js           Express: static SPA + /api health + Groww connect/status/proxy/order router
+src/marketSim.js    Seeded simulated feed (OHLCV, ticks, depth, breadth) — swappable for Groww quotes
+src/strategy.js     EMA(9/21) + RSI(14) + ATR signal scan (stable, computed from closed candles)
+src/paper.js        Paper ledger, Indian charges model, INR formatting (en-IN), persistence
+src/components/*    Tape, Watchlist, CandleChart, EquityCurve, SignalPanel, DepthBook, Positions, OrderTicket, Settings, Toasts
+src/App.jsx         Layout + state wiring    src/styles.css   Terminal theme
+```
+
+## Notes & disclaimers
+
+- Equity and F&O involve **substantial risk**. QlibPro is a tool, **not investment advice**. Simulated ≠ live performance.
+- **Do not expose port 8787 to the public internet** without an auth layer; this build has no user auth.
+- Groww Trading APIs support **equity (CASH) and F&O only** — no MCX. Tokens expire **daily 06:00 IST**.
+- Charges shown are estimates; refer to your contract note.
+- Keep your access token secret. `.env` is git-ignored; tokens are never logged or sent to the browser.

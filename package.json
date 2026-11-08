@@ -1,0 +1,23 @@
+{
+  "name": "qlibpro",
+  "private": true,
+  "version": "0.1.0",
+  "description": "QlibPro - single-page AI algo trading terminal for Indian markets (NSE/BSE) with Groww API connectivity",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "node server.js",
+    "server": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "lightweight-charts": "^4.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^5.4.11"
+  }
+}
