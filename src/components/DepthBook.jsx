@@ -2,8 +2,8 @@ import React from 'react';
 import { engine } from '../marketSim.js';
 import { formatNumberIN } from '../paper.js';
 
-export default function DepthBook({ symbol, tick }) {
-  const { bids, asks, spread } = engine.depth(symbol, 9);
+export default function DepthBook({ symbol, levels = 7 }) {
+  const { bids, asks, spread } = engine.depth(symbol, levels);
   const maxCum = Math.max(
     bids.length ? bids[bids.length - 1].cum : 1,
     asks.length ? asks[asks.length - 1].cum : 1,
@@ -20,15 +20,12 @@ export default function DepthBook({ symbol, tick }) {
   );
   return (
     <div className="depth">
-      <div className="depth-row" style={{ color: 'var(--dimmer)', fontSize: '8.5px', letterSpacing: '.1em' }}>
+      <div className="depth-row depth-head">
         <span>PRICE</span><span style={{ textAlign: 'right' }}>QTY</span><span style={{ textAlign: 'right' }}>CUM</span>
       </div>
       {asks.map((l, i) => <Row key={`a${i}`} level={l} side="ask" />)}
       <div className="depth-spread"><span>SPREAD</span><span>₹{formatNumberIN(spread)}</span></div>
       {bids.map((l, i) => <Row key={`b${i}`} level={l} side="bid" />)}
-      <div style={{ textAlign: 'center', color: 'var(--dimmer)', fontSize: '8px', marginTop: 6 }}>
-        Simulated depth · 5-level NSE quotes arrive via Groww in P1
-      </div>
     </div>
   );
 }

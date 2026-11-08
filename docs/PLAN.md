@@ -164,3 +164,12 @@ Equity and F&O trading involves substantial risk of loss. Past/simulated perform
 3. **Strategies** — EMA-cross+RSI default: keep, or is there a specific strategy you want encoded first?
 4. **Deployment** — local machine only, or a VPS (needs auth + HTTPS before anything live)?
 5. **Groww subscription** — do you already have the Trading API subscription + static IP whitelisting (if any) set up?
+
+## Front-ends (added 2026-11-08)
+
+Two pages ship from the same Express server:
+
+- `/` — Classic React pro-desk (watchlist, charts, ticket, positions, settings).
+- `/desk.html` — **QlibPro Desk**, an adaptation of MIT-licensed [GrokDesk](https://github.com/GrokDesk/grokdesk)'s single-file terminal (`assets/terminal.html`), re-targeted to NSE/BSE instruments. Shares the same `localStorage` paper ledger and the same `/api/order` router and `qlibpro.halted` kill-switch flag (F1/`h`).
+- Attribution: `NOTICE-GROKDESK.md` (MIT, (c) 2026 GrokDesk). No GrokDesk code is compiled into the React bundle; the desk page is a static file under `public/`.
+- Live order guardrails apply identically; indices are paper-only (Groww equity API cannot route index instruments).

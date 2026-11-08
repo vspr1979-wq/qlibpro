@@ -23,19 +23,35 @@ export function hashStr(s) {
 
 // `base` ≈ plausible Nov-2026 levels (fictional feed — for UI/paper use only)
 export const INSTRUMENTS = [
-  { symbol: 'RELIANCE',   name: 'Reliance Industries', type: 'stock', base: 3085.50, lot: 250,  sector: 'Energy' },
-  { symbol: 'HDFCBANK',   name: 'HDFC Bank',           type: 'stock', base: 1012.40, lot: 550,  sector: 'Bank' },
-  { symbol: 'ICICIBANK',  name: 'ICICI Bank',          type: 'stock', base: 1402.75, lot: 700,  sector: 'Bank' },
-  { symbol: 'INFY',       name: 'Infosys',             type: 'stock', base: 2048.30, lot: 400,  sector: 'IT' },
-  { symbol: 'TCS',        name: 'Tata Consultancy',    type: 'stock', base: 3221.60, lot: 175,  sector: 'IT' },
-  { symbol: 'SBIN',       name: 'State Bank of India', type: 'stock', base: 836.20,  lot: 750,  sector: 'Bank' },
-  { symbol: 'BHARTIARTL', name: 'Bharti Airtel',       type: 'stock', base: 1742.10, lot: 475,  sector: 'Telecom' },
-  { symbol: 'ITC',        name: 'ITC',                 type: 'stock', base: 468.90,  lot: 1600, sector: 'FMCG' },
-  { symbol: 'LT',         name: 'Larsen & Toubro',     type: 'stock', base: 3642.00, lot: 150,  sector: 'Infra' },
-  { symbol: 'TATAMOTORS', name: 'Tata Motors',         type: 'stock', base: 968.35,  lot: 550,  sector: 'Auto' },
-  { symbol: 'BAJFINANCE', name: 'Bajaj Finance',       type: 'stock', base: 913.50,  lot: 750,  sector: 'NBFC' },
-  { symbol: 'MARUTI',     name: 'Maruti Suzuki',       type: 'stock', base: 10980.00, lot: 100, sector: 'Auto' },
+  { symbol: 'RELIANCE',   name: 'Reliance Industries', type: 'stock', exchange: 'NSE', base: 3085.50, lot: 250,  sector: 'Energy' },
+  { symbol: 'HDFCBANK',   name: 'HDFC Bank',           type: 'stock', exchange: 'NSE', base: 1012.40, lot: 550,  sector: 'Bank' },
+  { symbol: 'ICICIBANK',  name: 'ICICI Bank',          type: 'stock', exchange: 'NSE', base: 1402.75, lot: 700,  sector: 'Bank' },
+  { symbol: 'INFY',       name: 'Infosys',             type: 'stock', exchange: 'NSE', base: 2048.30, lot: 400,  sector: 'IT' },
+  { symbol: 'TCS',        name: 'Tata Consultancy',    type: 'stock', exchange: 'NSE', base: 3221.60, lot: 175,  sector: 'IT' },
+  { symbol: 'SBIN',       name: 'State Bank of India', type: 'stock', exchange: 'NSE', base: 836.20,  lot: 750,  sector: 'Bank' },
+  { symbol: 'BHARTIARTL', name: 'Bharti Airtel',       type: 'stock', exchange: 'NSE', base: 1742.10, lot: 475,  sector: 'Telecom' },
+  { symbol: 'ITC',        name: 'ITC',                 type: 'stock', exchange: 'NSE', base: 468.90,  lot: 1600, sector: 'FMCG' },
+  { symbol: 'LT',         name: 'Larsen & Toubro',     type: 'stock', exchange: 'NSE', base: 3642.00, lot: 150,  sector: 'Infra' },
+  { symbol: 'TATAMOTORS', name: 'Tata Motors',         type: 'stock', exchange: 'NSE', base: 968.35,  lot: 550,  sector: 'Auto' },
+  { symbol: 'BAJFINANCE', name: 'Bajaj Finance',       type: 'stock', exchange: 'NSE', base: 913.50,  lot: 750,  sector: 'NBFC' },
+  { symbol: 'MARUTI',     name: 'Maruti Suzuki',       type: 'stock', exchange: 'NSE', base: 10980.00, lot: 100, sector: 'Auto' },
 ];
+
+// Indian benchmarks — selectable for charting/scanning.
+// NOTE: indices are not directly orderable on Groww; live execution needs F&O.
+// Paper fills are simulated. Lot sizes shown are indicative (NSE circular prevails).
+export const INDICES = [
+  { symbol: 'NIFTY50',   name: 'Nifty 50',            type: 'index', exchange: 'NSE', base: 25712.40, lot: 75, sector: 'Index' },
+  { symbol: 'BANKNIFTY', name: 'Nifty Bank',          type: 'index', exchange: 'NSE', base: 57318.85, lot: 30, sector: 'Index' },
+  { symbol: 'SENSEX',    name: 'BSE Sensex',          type: 'index', exchange: 'BSE', base: 84132.20, lot: 20, sector: 'Index' },
+  { symbol: 'NIFTYIT',   name: 'Nifty IT',            type: 'index', exchange: 'NSE', base: 38941.15, lot: 0,  sector: 'Index' },
+  { symbol: 'FINNIFTY',  name: 'Nifty Fin Services',  type: 'index', exchange: 'NSE', base: 26108.55, lot: 65, sector: 'Index' },
+  { symbol: 'NIFTY500',  name: 'Nifty 500',           type: 'index', exchange: 'NSE', base: 24122.90, lot: 0,  sector: 'Index' },
+  { symbol: 'MIDCAP100', name: 'Nifty Midcap 100',    type: 'index', exchange: 'NSE', base: 53874.60, lot: 0,  sector: 'Index' },
+  { symbol: 'INDIAVIX',  name: 'India VIX',           type: 'vix',   exchange: 'NSE', base: 12.86,    lot: 0,  sector: 'Volatility' },
+];
+
+const ALL_INSTRUMENTS = [...INSTRUMENTS, ...INDICES];
 
 export const TAPE = [
   { symbol: 'NIFTY 50',   value: 25712.40, chg: 0.62, kind: 'index' },
@@ -54,7 +70,7 @@ export const TF_LABEL = { '1m': '1m', '5m': '5m', '15m': '15m', '1H': '1H', '1D'
 class MarketEngine {
   constructor() {
     this.instruments = {};
-    for (const ins of INSTRUMENTS) {
+    for (const ins of ALL_INSTRUMENTS) {
       const rnd = mulberry32(hashStr(ins.symbol + ':init'));
       const prevClose = ins.base * (0.985 + rnd() * 0.03);
       const open = prevClose * (1 + (rnd() - 0.5) * 0.012);

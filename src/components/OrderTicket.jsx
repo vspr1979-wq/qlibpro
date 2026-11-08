@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { engine } from '../marketSim.js';
 import { estimateCharges, formatINR, MAX_ORDER_NOTIONAL, MAX_QTY } from '../paper.js';
 
-export default function OrderTicket({ symbol, mode, halted, onPlace }) {
+export default function OrderTicket({ symbol, symbolType = 'stock', mode, halted, onPlace }) {
   const [side, setSide] = useState('BUY');
   const [qty, setQty] = useState(25);
   const [orderType, setOrderType] = useState('MARKET');
@@ -11,7 +11,6 @@ export default function OrderTicket({ symbol, mode, halted, onPlace }) {
   const [error, setError] = useState('');
   const [placing, setPlacing] = useState(false);
 
-  // reset sensible defaults when symbol changes
   useEffect(() => {
     const ltp = engine.get(symbol)?.ltp ?? 0;
     setLimitPrice(ltp ? ltp.toFixed(2) : '');
@@ -25,9 +24,11 @@ export default function OrderTicket({ symbol, mode, halted, onPlace }) {
   const charges = useMemo(() => estimateCharges(side, qty || 0, execPrice || 0, product), [side, qty, execPrice, product]);
 
   const isLive = mode === 'live';
+  const isIndex = symbolType !== 'stock';
+  const indexLiveBlocked = isLive && isIndex;
   const notionalOk = estValue <= MAX_ORDER_NOTIONAL;
   const qtyOk = Number.isFinite(qty) && qty >= 1 && qty <= MAX_QTY;
-  const canPlace = !halted && !placing && qtyOk && notionalOk && execPrice > 0;
+  const canPlace = !halted && !placing && qtyOk && notionalOk && execPrice > 0 && !indexLiveBlocked;
 
   const submit = async () => {
     setError('');
@@ -45,12 +46,17 @@ export default function OrderTicket({ symbol, mode, halted, onPlace }) {
       <div className="panel-title">
         Order Ticket <span className="dim" style={{ textTransform: 'none', letterSpacing: 0 }}>· {symbol}</span>
         <span className="spacer" />
-        <span className="chip" style={{ color: isLive ? 'var(--green)' : 'var(--amber)', borderColor: isLive ? 'rgba(46,189,133,.4)' : 'rgba(240,185,11,.4)' }}>
+        <span className="chip" style={{ color: isLive ? 'var(--green)' : 'var(--amber)', borderColor: isLive ? 'rgba(21,128,61,.4)' : 'rgba(217,119,6,.4)' }}>
           {isLive ? 'LIVE · GROWW' : 'PAPER'}
         </span>
       </div>
 
-      {halted && <div className="halt-banner" style={{ margin: '8px 11px 0' }}>TRADING HALTED — kill-switch engaged</div>}
+      {halted && <div className="halt-banner" style={{ margin: '6px 8px 0' }}>TRADING HALTED — kill-switch engaged</div>}
+      {isIndex && (
+        <div className="index-note" style={{ margin: '6px 8px 0' }}>
+          {symbolType === 'vix' ? 'INDIA VIX' : 'INDEX'} — paper fills are simulated; it is <b>not directly orderable</b> on Groww. Live execution needs {symbol === 'SENSEX' ? 'Sensex' : 'Nifty / BankNifty'} F&amp;O.
+        </div>
+      )}
 
       <div className="side-toggle">
         <button className={`side-btn buy${side === 'BUY' ? ' active' : ''}`} onClick={() => setSide('BUY')}>BUY</button>
@@ -101,10 +107,12 @@ export default function OrderTicket({ symbol, mode, halted, onPlace }) {
         <button className={`place-btn ${side.toLowerCase()}`} disabled={!canPlace} onClick={submit}>
           {placing ? 'PLACING…' : `${side} ${symbol}`}
         </button>
-        <div style={{ fontSize: 8, color: 'var(--dimmer)', textAlign: 'center' }}>
-          {isLive
-            ? 'LIVE — order is routed to Groww (NSE, CASH). Double-check qty before placing.'
-            : 'Paper fill at simulated LTP ± slippage. No real order is placed.'}
+        <div style={{ fontSize: 7.5, color: 'var(--dimmer)', textAlign: 'center', lineHeight: 1.5 }}>
+          {indexLiveBlocked
+            ? 'Blocked in LIVE — indices trade via F&O, not via direct equity order.'
+            : isLive
+              ? 'LIVE — routed to Groww (NSE, CASH). Double-check qty.'
+              : 'Paper fill at simulated LTP ± slippage. No real order.'}
         </div>
       </div>
     </div>

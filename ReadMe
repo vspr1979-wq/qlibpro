@@ -4,12 +4,18 @@ Single-page, all-in-one **algo trading terminal for Indian markets (NSE/BSE · C
 
 > **Status: v0.1 draft example** — the feed is **simulated** (clearly badged "SIM FEED"); orders run in **paper mode** by default. Live NSE order routing via Groww is wired and gated behind an explicit token + kill-switch. See `docs/PLAN.md` for the full draft plan, architecture, Groww API notes, safety model and roadmap.
 
+Two front-ends ship in this repo:
+
+- **QlibPro Desk** (`/desk.html`) — the "screenshot" experience: an adaptation of the MIT-licensed [GrokDesk](https://github.com/GrokDesk/grokdesk) single-file terminal, re-targeted to Indian markets (Nifty/Sensex/BankNifty/India VIX + 12 NSE F&O stocks), sharing the same paper ledger (localStorage) and the same `/api/order` Groww router. Includes the full agent-desk hex hive (QLIB CORE), signal stream, risk/roster feed and F-key quick orders (**F1** kill-halt · **F2/F3** quick BUY/SELL on the featured symbol · `h` toggles halt). Footer links back to the classic UI.
+- **Classic UI** (`/`) — the structured React pro-desk (watchlist, lightweight-charts candles with EMA/Signals, spectrogram, order ticket, positions, Groww settings flow).
+
 ## Quickstart
 
 ```bash
 npm install
 npm run build
-npm start          # → http://localhost:8787   (bind 0.0.0.0, port from env PORT)
+npm start          # → http://localhost:8787   (classic UI)
+                   #   → http://localhost:8787/desk.html   (QlibPro Desk — GrokDesk-adapted)
 ```
 
 Dev mode with hot reload (UI on :5173, API proxied to :8787):
