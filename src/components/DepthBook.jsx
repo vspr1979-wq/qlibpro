@@ -1,9 +1,13 @@
 import React from 'react';
-import { engine } from '../marketSim.js';
+import { engine } from '../liveFeed.js';
 import { formatNumberIN } from '../paper.js';
 
 export default function DepthBook({ symbol, levels = 7 }) {
-  const { bids, asks, spread } = engine.depth(symbol, levels);
+  const d = engine.depth(symbol, levels);
+  if (!d) {
+    return <div className="empty-state" style={{ padding: 16 }}>Depth unavailable — connect Groww (or enable paper mode).</div>;
+  }
+  const { bids, asks, spread } = d;
   const maxCum = Math.max(
     bids.length ? bids[bids.length - 1].cum : 1,
     asks.length ? asks[asks.length - 1].cum : 1,

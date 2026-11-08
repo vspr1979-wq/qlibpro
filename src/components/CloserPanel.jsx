@@ -8,9 +8,10 @@ export default function CloserPanel({ signal, ltp, others, onSelect }) {
   const isBuy = signal.action === 'BUY';
   const isSell = signal.action === 'SELL';
   const actionable = signal.action !== 'NEUTRAL';
-  const risk = Math.abs(ltp - signal.stop);
-  const reward = Math.abs(signal.target - ltp);
-  const rr = risk > 0 ? (reward / risk).toFixed(1) : '—';
+  const hasLtp = typeof ltp === 'number' && Number.isFinite(ltp) && ltp > 0;
+  const risk = hasLtp && signal.stop != null ? Math.abs(ltp - signal.stop) : null;
+  const reward = hasLtp && signal.target != null ? Math.abs(signal.target - ltp) : null;
+  const rr = risk ? (reward / risk).toFixed(1) : '—';
 
   return (
     <div className="panel closer-panel">
@@ -25,9 +26,9 @@ export default function CloserPanel({ signal, ltp, others, onSelect }) {
           </div>
         </div>
         <div className="level-rows">
-          <div className="level-row"><span>ENTRY</span><b className="num">₹{formatNumberIN(ltp)}</b><i /></div>
-          <div className="level-row tgt"><span>TARGET</span><b className="num pos">₹{formatNumberIN(signal.target)}</b><i>+{(((signal.target - ltp) / ltp) * 100).toFixed(2)}%</i></div>
-          <div className="level-row stp"><span>STOP-LOSS</span><b className="num neg">₹{formatNumberIN(signal.stop)}</b><i>{(((signal.stop - ltp) / ltp) * 100).toFixed(2)}%</i></div>
+          <div className="level-row"><span>ENTRY</span><b className="num">{hasLtp ? `₹${formatNumberIN(ltp)}` : '—'}</b><i /></div>
+          <div className="level-row tgt"><span>TARGET</span><b className="num pos">{signal.target == null ? '—' : `₹${formatNumberIN(signal.target)}`}</b><i>{hasLtp && signal.target != null ? `+${(((signal.target - ltp) / ltp) * 100).toFixed(2)}%` : ''}</i></div>
+          <div className="level-row stp"><span>STOP-LOSS</span><b className="num neg">{signal.stop == null ? '—' : `₹${formatNumberIN(signal.stop)}`}</b><i>{hasLtp && signal.stop != null ? `${(((signal.stop - ltp) / ltp) * 100).toFixed(2)}%` : ''}</i></div>
         </div>
         {others.length > 0 && (
           <div className="also-watching">

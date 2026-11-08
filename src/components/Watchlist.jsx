@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { engine } from '../marketSim.js';
+import { engine } from '../liveFeed.js';
 import { formatNumberIN } from '../paper.js';
 
 function Sparkline({ symbol, positive }) {
@@ -14,6 +14,7 @@ function Sparkline({ symbol, positive }) {
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, w, h);
     const data = engine.sparkline(symbol, 30);
+    if (!data || data.length < 2) { ctx.clearRect(0, 0, w, h); return; }
     const min = Math.min(...data), max = Math.max(...data), range = max - min || 1;
     ctx.beginPath();
     data.forEach((v, i) => {
@@ -61,8 +62,8 @@ export default function Watchlist({ stocks, indices, selected, onSelect }) {
       <div className="wl-list">
         {rows.length === 0 && <div className="empty-state">No matches for “{query}”.</div>}
         {rows.map((s) => {
-          const { chg, pct } = engine.change(s.symbol);
-          const up = chg >= 0;
+          const ch = s.ltp == null ? null : engine.change(s.symbol);
+          const up = (ch?.chg ?? 0) >= 0;
           return (
             <button
               key={s.symbol}
@@ -76,9 +77,9 @@ export default function Watchlist({ stocks, indices, selected, onSelect }) {
               </span>
               <span className="wl-spark"><Sparkline symbol={s.symbol} positive={up} /></span>
               <span>
-                <span className="wl-ltp">{formatNumberIN(s.ltp)}</span>
-                <span className={`wl-chg ${up ? 'pos' : 'neg'}`} style={{ display: 'block' }}>
-                  {up ? '▲' : '▼'} {Math.abs(pct).toFixed(2)}%
+                <span className="wl-ltp">{s.ltp == null ? '—' : formatNumberIN(s.ltp)}</span>
+                <span className={`wl-chg ${ch ? (up ? 'pos' : 'neg') : 'dim'}`} style={{ display: 'block' }}>
+                  {ch ? `${up ? '▲' : '▼'} ${Math.abs(ch.pct).toFixed(2)}%` : 'awaiting Groww'}
                 </span>
               </span>
             </button>

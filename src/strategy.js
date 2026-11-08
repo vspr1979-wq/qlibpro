@@ -52,6 +52,7 @@ export function atr(candles, period = 14) {
 }
 
 export function scanSymbol(symbol, candles) {
+  if (!Array.isArray(candles) || candles.length < 30) return scanSymbolSafe(symbol, candles);
   const closes = candles.map(c => c.close);
   const e9 = ema(closes, 9);
   const e21 = ema(closes, 21);
@@ -110,3 +111,12 @@ export function scanWatchlist(candlesBySymbol) {
 }
 
 function round2(n) { return Math.round(n * 100) / 100; }
+
+// Guard: callers may invoke scanSymbol with an empty/short live series before
+// the first Groww candles fetch lands. Return a flat reading instead of NaNs.
+export function scanSymbolSafe(symbol, candles) {
+  if (!Array.isArray(candles) || candles.length < 30) {
+    return { symbol, action: 'NEUTRAL', confidence: 0, ltp: null, ema9: null, ema21: null, emaDiffPct: 0, rsi: 50, atr: 0, stop: null, target: null, crossed: 'NO DATA', time: new Date().toISOString() };
+  }
+  return scanSymbol(symbol, candles);
+}

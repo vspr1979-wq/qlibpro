@@ -484,3 +484,13 @@ button { font-family: inherit; cursor: pointer; }
   body { overflow: auto; }
   .app { height: auto; min-height: 100vh; grid-template-rows: 46px 27px 40px 68px 480px 205px 25px; }
 }
+
+/* ── paper-simulation toggle in settings ── */
+.toggle-row { display: flex; gap: 10px; align-items: flex-start; background: var(--panel-2); border: 1px solid var(--border-soft); border-radius: 8px; padding: 9px 11px; cursor: pointer; }
+.toggle-row input[type="checkbox"] { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--amber); cursor: pointer; }
+.toggle-text small { display: block; color: var(--dimmer); font-size: 8.5px; line-height: 1.5; margin-top: 2px; }
+.toggle-text b { font-size: 9.5px; letter-spacing: .06em; }
+
+/* ── empty-chart state (no feed / no token) ── */
+.chart-empty { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; text-align: center; color: var(--dimmer); font-family: var(--mono); letter-spacing: .18em; font-size: 11px; font-weight: 800; }
+.chart-empty span { font-family: Inter, sans-serif; letter-spacing: 0; text-transform: none; font-size: 9.5px; font-weight: 400; color: var(--dimmer); line-height: 1.7; }

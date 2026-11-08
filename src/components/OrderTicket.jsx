@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { engine } from '../marketSim.js';
+import { engine } from '../liveFeed.js';
 import { estimateCharges, formatINR, MAX_ORDER_NOTIONAL, MAX_QTY } from '../paper.js';
 
 export default function OrderTicket({ symbol, symbolType = 'stock', mode, halted, onPlace }) {
@@ -29,6 +29,7 @@ export default function OrderTicket({ symbol, symbolType = 'stock', mode, halted
   const notionalOk = estValue <= MAX_ORDER_NOTIONAL;
   const qtyOk = Number.isFinite(qty) && qty >= 1 && qty <= MAX_QTY;
   const canPlace = !halted && !placing && qtyOk && notionalOk && execPrice > 0 && !indexLiveBlocked;
+  const feedNote = ltp > 0 ? null : 'Awaiting Groww quotes — connect your Access Token in Settings (gear), or enable PAPER simulation there.';
 
   const submit = async () => {
     setError('');
@@ -97,11 +98,12 @@ export default function OrderTicket({ symbol, symbolType = 'stock', mode, halted
         )}
 
         <div className="ticket-meta">
-          <span>LTP <b className="num" style={{ color: 'var(--text)' }}>₹{ltp.toFixed(2)}</b></span>
+          <span>LTP <b className="num" style={{ color: 'var(--text)' }}>{ltp > 0 ? `₹${ltp.toFixed(2)}` : '—'}</b></span>
           <span>Value <b className="num" style={{ color: 'var(--text)' }}>{formatINR(estValue, { decimals: 0 })}</b></span>
           <span>Charges <b className="num" style={{ color: 'var(--text)' }}>≈{formatINR(charges.total)}</b></span>
         </div>
 
+        {feedNote && <div className="status-line err" style={{ marginBottom: 0 }}>{feedNote}</div>}
         {error && <div className="status-line err">{error}</div>}
 
         <button className={`place-btn ${side.toLowerCase()}`} disabled={!canPlace} onClick={submit}>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function SettingsModal({ open, onClose, mode, connectedAt, tokenSource, onConnect, onDisconnect }) {
+export default function SettingsModal({ open, onClose, mode, connectedAt, tokenSource, onConnect, onDisconnect, paper = false, onPaperChange }) {
   const [token, setToken] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null); // {tone, text}
@@ -44,8 +44,18 @@ export default function SettingsModal({ open, onClose, mode, connectedAt, tokenS
           <div className={`status-line ${mode === 'live' ? 'ok' : ''}`}>
             {mode === 'live'
               ? `● LIVE — token stored in server memory${tokenSource ? ` (source: ${tokenSource})` : ''}${connectedAt ? ` since ${new Date(connectedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}` : ''}`
-              : '○ PAPER — no Groww token configured. Orders are simulated locally.'}
+              : paper
+                ? '○ PAPER SIMULATION — synthetic feed. Not the market.'
+                : '○ NO FEED — Groww not connected and paper simulation is OFF. Prices show dashes; orders are disabled until you connect or re-enable paper.'}
           </div>
+
+          <label className="toggle-row" htmlFor="paper-sim">
+            <input id="paper-sim" type="checkbox" checked={paper} onChange={e => onPaperChange?.(e.target.checked)} />
+            <span className="toggle-text">
+              <b>PAPER SIMULATION</b> (synthetic feed)
+              <small>Off by default. When off and Groww is disconnected the desk shows dashes — never fabricated prices. Turn on to trade a simulated ₹10L with generated ticks.</small>
+            </span>
+          </label>
 
           <div>
             <b>How to get your access token</b>

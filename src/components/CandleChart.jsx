@@ -97,7 +97,7 @@ export default function CandleChart({ symbol, symbolName, candles, tf, onTfChang
     if (!c) return;
     if (tgtLineRef.current) { c.removePriceLine(tgtLineRef.current); tgtLineRef.current = null; }
     if (slLineRef.current) { c.removePriceLine(slLineRef.current); slLineRef.current = null; }
-    if (sigAction && sigAction !== 'NEUTRAL') {
+    if (sigAction && sigAction !== 'NEUTRAL' && sigTarget != null && sigStop != null) {
       tgtLineRef.current = c.createPriceLine({ price: sigTarget, color: '#15803d', lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: 'TGT' });
       slLineRef.current = c.createPriceLine({ price: sigStop, color: '#dc2626', lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: 'SL' });
     }
@@ -117,7 +117,7 @@ export default function CandleChart({ symbol, symbolName, candles, tf, onTfChang
             <span>H <b className="num pos">{formatNumberIN(last.high)}</b></span>
             <span>L <b className="num neg">{formatNumberIN(last.low)}</b></span>
             <span>C <b className={`num ${ohlcUp ? 'pos' : 'neg'}`}>{formatNumberIN(last.close)}</b></span>
-            <span>RSI14 <b className="num" style={{ color: 'var(--cyan)' }}>{r14[r14.length - 1]?.toFixed(1)}</b></span>
+            <span>RSI14 <b className="num" style={{ color: 'var(--teal)' }}>{r14[r14.length - 1]?.toFixed(1)}</b></span>
           </span>
         )}
         <div className="tf-group">
@@ -126,7 +126,11 @@ export default function CandleChart({ symbol, symbolName, candles, tf, onTfChang
           ))}
         </div>
       </div>
-      <div className="chart-wrap"><div ref={containerRef} /></div>
+      <div className="chart-wrap"><div ref={containerRef} />
+        {candles.length === 0 && (
+          <div className="chart-empty">NO LIVE CANDLES<br /><span>Connect Groww in Settings (gear) — or re-enable PAPER simulation there.<br />The 1-minute timeframe is not fetched from Groww.</span></div>
+        )}
+      </div>
     </div>
   );
 }

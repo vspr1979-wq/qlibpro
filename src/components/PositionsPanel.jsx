@@ -1,17 +1,18 @@
 import React from 'react';
-import { engine } from '../marketSim.js';
+import { engine } from '../liveFeed.js';
 import { formatINR, formatSignedINR, formatNumberIN } from '../paper.js';
 
 export default function PositionsPanel({ positions, onExit }) {
-  const ltpOf = (sym) => engine.get(sym)?.ltp ?? 0;
+  const ltpOf = (sym) => engine.get(sym)?.ltp ?? null;
   const rows = positions.map(p => {
     const ltp = ltpOf(p.symbol);
     const dir = p.side === 'BUY' ? 1 : -1;
-    const pnl = (ltp - p.avg) * p.qty * dir;
-    const pnlPct = p.avg > 0 ? ((ltp - p.avg) / p.avg) * 100 * dir : 0;
+    const pnl = ltp == null ? null : (ltp - p.avg) * p.qty * dir;
+    const pnlPct = ltp == null || p.avg <= 0 ? null : ((ltp - p.avg) / p.avg) * 100 * dir;
     return { ...p, ltp, pnl, pnlPct };
   });
-  const totalPnl = rows.reduce((s, r) => s + r.pnl, 0);
+  const computable = rows.filter(r => r.pnl != null);
+  const totalPnl = computable.length === rows.length ? rows.reduce((s, r) => s + r.pnl, 0) : null;
 
   if (rows.length === 0) {
     return (
@@ -39,10 +40,14 @@ export default function PositionsPanel({ positions, onExit }) {
               </td>
               <td>{r.qty}</td>
               <td>{formatNumberIN(r.avg)}</td>
-              <td>{formatNumberIN(r.ltp)}</td>
+              <td>{r.ltp == null ? '—' : formatNumberIN(r.ltp)}</td>
               <td>
-                <div className={r.pnl >= 0 ? 'pos' : 'neg'} style={{ fontWeight: 700 }}>{formatSignedINR(r.pnl)}</div>
-                <div style={{ fontSize: 8, color: 'var(--dimmer)' }}>{r.pnlPct >= 0 ? '+' : ''}{r.pnlPct.toFixed(2)}%</div>
+                {r.pnl == null
+                  ? <div className="dim" style={{ fontWeight: 700 }}>—</div>
+                  : <>
+                      <div className={r.pnl >= 0 ? 'pos' : 'neg'} style={{ fontWeight: 700 }}>{formatSignedINR(r.pnl)}</div>
+                      <div style={{ fontSize: 8, color: 'var(--dimmer)' }}>{r.pnlPct >= 0 ? '+' : ''}{r.pnlPct.toFixed(2)}%</div>
+                    </>}
               </td>
               <td><button className="exit-btn" onClick={() => onExit(r)}>EXIT</button></td>
             </tr>
@@ -51,7 +56,9 @@ export default function PositionsPanel({ positions, onExit }) {
       </table>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', borderTop: '1px solid var(--border-soft)', fontFamily: 'var(--mono)', fontSize: 10 }}>
         <span className="dim">Unrealized P&amp;L</span>
-        <b className={totalPnl >= 0 ? 'pos' : 'neg'}>{formatSignedINR(totalPnl)}</b>
+        {totalPnl == null
+          ? <b className="dim">awaiting Groww quotes</b>
+          : <b className={totalPnl >= 0 ? 'pos' : 'neg'}>{formatSignedINR(totalPnl)}</b>}
       </div>
     </div>
   );

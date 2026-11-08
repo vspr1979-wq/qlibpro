@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { engine, nseOpenNow, INSTRUMENTS, INDICES } from './marketSim.js';
+import { engine, nseOpenNow, INSTRUMENTS, INDICES, isPaperEnabled, setPaperEnabled, liveState } from './liveFeed.js';
 import { scanWatchlist, scanSymbol } from './strategy.js';
 import {
   INITIAL_CAPITAL, DAILY_LOSS_LIMIT, estimateCharges, formatINR, formatSignedINR, formatNumberIN,
@@ -34,7 +34,7 @@ export default function App() {
   const [orders, setOrders] = useState(() => store.loadOrders());
   const [equity, setEquity] = useState(() => store.loadEquity());
   const [events, setEvents] = useState([
-    { id: 'ev-boot', ts: Date.now(), text: 'QLIBPRO DESK online · PAPER mode · simulated feed', tone: 'dim' },
+    { id: 'ev-boot', ts: Date.now(), text: isPaperEnabled() ? 'QLIBPRO DESK online · PAPER simulation ON' : 'QLIBPRO DESK online · LIVE mode (Groww) — no simulated feed', tone: 'dim' },
   ]);
   const [toasts, setToasts] = useState([]);
   const [halted, setHalted] = useState(() => {
@@ -48,7 +48,7 @@ export default function App() {
   const eventIdRef = useRef(1);
   const prevActionsRef = useRef({});
 
-  // ── live tick loop (simulated feed) ─────────────────────────────
+  // ── tick loop (paper: sim walk · live: Groww fetches, throttled) ──
   useEffect(() => {
     const id = setInterval(() => { engine.tick(); setTick(t => t + 1); }, 900);
     return () => clearInterval(id);
@@ -82,16 +82,27 @@ export default function App() {
   useEffect(() => {
     if (welcomedRef.current) return;
     welcomedRef.current = true;
-    pushToast('warn', 'PAPER MODE · SIMULATED FEED', 'Paper capital ₹10L loaded. Connect Groww via the gear for live routing.');
+    if (isPaperEnabled()) {
+      pushToast('warn', 'PAPER SIMULATION ON', 'Synthetic feed. For live routing paste your Groww Access Token in Settings (gear).');
+      addEvent('PAPER simulation — synthetic prices, not the market', 'dim');
+    } else {
+      addEvent('LIVE mode — prices stream from Groww when connected (dashes until then)', 'dim');
+    }
     addEvent('Watchlist scan armed: 20 instruments × 5 timeframes', 'dim');
   }, [pushToast, addEvent]);
 
+  // paper toggle broadcast (Settings) — re-render + nudge a tick
+  useEffect(() => {
+    const onPaper = () => setTick(t => t + 1);
+    window.addEventListener('qlibpro:paper', onPaper);
+    return () => window.removeEventListener('qlibpro:paper', onPaper);
+  }, []);
+
   // ── derived market data ─────────────────────────────────────────
-  const stockList = useMemo(() => INSTRUMENTS.map(s => engine.get(s.symbol)), []);
-  const indexList = useMemo(() => INDICES.map(s => engine.get(s.symbol)), []);
-  const withLtp = (list) => list.map(s => ({ ...s, ltp: engine.get(s.symbol).ltp }));
-  const stocks = withLtp(stockList);
-  const indices = withLtp(indexList);
+  // NOTE: no memo on these — the live facade returns fresh snapshots per call,
+  // and paper mode mutates shared instrument objects. 20 objects/render is cheap.
+  const stocks = INSTRUMENTS.map(s => engine.get(s.symbol));
+  const indices = INDICES.map(s => engine.get(s.symbol));
 
   const candleBucket = Math.floor(tick / 6); // anchored series refresh ~every 5.4s
   const candles = useMemo(() => engine.candles(selected, tf, 160), [selected, tf, candleBucket]);
@@ -128,20 +139,22 @@ export default function App() {
   const inst = engine.get(selected);
   const instType = inst?.type ?? 'stock';
   const isIndex = instType !== 'stock';
-  const ltp = inst?.ltp ?? 0;
-  const chgInfo = engine.change(selected);
-  const dayUp = chgInfo.chg >= 0;
+  const ltp = typeof inst?.ltp === 'number' && Number.isFinite(inst.ltp) ? inst.ltp : null;
+  const chgInfo = ltp == null ? null : engine.change(selected);
+  const dayUp = (chgInfo?.chg ?? 0) >= 0;
 
-  const breadth = engine.breadth;
-  const advTotal = breadth.advancing + breadth.declining;
-  const advPct = (breadth.advancing / advTotal) * 100;
-  const regime = breadth.advancing >= breadth.declining ? { label: 'BULLISH', cls: 'bull' } : { label: 'BEARISH', cls: 'bear' };
+  const breadth = engine.breadth; // null in LIVE (Groww has no breadth endpoint)
+  const advPct = breadth ? (breadth.advancing / Math.max(1, breadth.advancing + breadth.declining)) * 100 : null;
+  const regime = breadth
+    ? (breadth.advancing >= breadth.declining ? { label: 'BULLISH', cls: 'bull' } : { label: 'BEARISH', cls: 'bear' })
+    : { label: 'NO DATA', cls: 'flat' };
   const rsiVal = selectedSignal?.rsi ?? 50;
   const rsiZone = rsiVal >= 70 ? 'OVERBOUGHT' : rsiVal <= 30 ? 'OVERSOLD' : 'NEUTRAL';
   const atrVal = selectedSignal?.atr ?? 0;
   const emaDiff = selectedSignal?.emaDiffPct ?? 0;
   const trendUp = emaDiff >= 0;
-  const vixVal = engine.get('INDIAVIX')?.ltp ?? 0;
+  const vixRaw = engine.get('INDIAVIX')?.ltp;
+  const vixVal = typeof vixRaw === 'number' && Number.isFinite(vixRaw) ? vixRaw : null;
 
   // volume gauge: relative volume of last anchored candle vs prior 20
   const relVol = useMemo(() => {
@@ -156,8 +169,8 @@ export default function App() {
     { label: 'TREND', value: `${trendUp ? '▲' : '▼'} ${Math.abs(emaDiff).toFixed(2)}%`, pct: Math.min(100, (Math.abs(emaDiff) / 1.2) * 100), color: trendUp ? '#15803d' : '#dc2626' },
     { label: 'MOMENTUM', value: `RSI ${rsiVal.toFixed(0)}`, pct: Math.min(100, (Math.abs(rsiVal - 50) / 35) * 100 + 18), color: '#d97706' },
     { label: 'VOLUME', value: `${relVol.toFixed(2)}× avg`, pct: Math.min(100, relVol * 45), color: '#2563eb' },
-    { label: 'BREADTH', value: `${advPct.toFixed(0)}% adv`, pct: advPct, color: '#0f766e' },
-    { label: 'FUT PCR', value: breadth.pcr.toFixed(2), pct: Math.min(100, (breadth.pcr / 1.6) * 100), color: breadth.pcr >= 1 ? '#15803d' : '#d97706' },
+    { label: 'BREADTH', value: advPct == null ? '—' : `${advPct.toFixed(0)}% adv`, pct: advPct ?? 0, color: '#0f766e' },
+    { label: 'FUT PCR', value: breadth ? breadth.pcr.toFixed(2) : '—', pct: breadth ? Math.min(100, (breadth.pcr / 1.6) * 100) : 0, color: breadth && breadth.pcr >= 1 ? '#15803d' : '#d97706' },
   ];
 
   // signal-flip → tape events
@@ -179,16 +192,21 @@ export default function App() {
   // heartbeat in the tape
   useEffect(() => {
     if (tick > 0 && tick % 25 === 10) {
-      addEvent(`SCAN 20 instruments · ${actionable.length} actionable · breadth ${breadth.advancing}↑/${breadth.declining}↓`, 'dim');
+      addEvent(`SCAN 20 instruments · ${actionable.length} actionable${breadth ? ` · breadth ${breadth.advancing}↑/${breadth.declining}↓` : ''}`, 'dim');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tick]);
 
   // ── paper ledger math ───────────────────────────────────────────
-  const ltpOf = useCallback((sym) => engine.get(sym)?.ltp ?? 0, []);
+  const ltpOf = useCallback((sym) => {
+    const v = engine.get(sym)?.ltp;
+    return typeof v === 'number' && Number.isFinite(v) ? v : null;
+  }, []);
   const unrealized = positions.reduce((sum, p) => {
+    const ltpNow = ltpOf(p.symbol);
+    if (ltpNow == null) return sum; // unpriced positions excluded from the display math
     const dir = p.side === 'BUY' ? 1 : -1;
-    return sum + (ltpOf(p.symbol) - p.avg) * p.qty * dir;
+    return sum + (ltpNow - p.avg) * p.qty * dir;
   }, 0);
   const closedOrders = orders.filter(o => o.type === 'close');
   const realized = closedOrders.reduce((s, o) => s + (o.pnl || 0), 0);
@@ -199,6 +217,12 @@ export default function App() {
   const equityNow = INITIAL_CAPITAL + sessionPnl;
   const sessionPct = (sessionPnl / INITIAL_CAPITAL) * 100;
   const ordersToday = orders.filter(o => new Date(o.ts).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) === istDateStr()).length;
+  const maxDrawdown = useMemo(() => {
+    if (!equity || equity.length < 2) return null;
+    let peak = equity[0], worst = 0;
+    for (const v of equity) { if (v > peak) peak = v; const dd = peak > 0 ? ((peak - v) / peak) * 100 : 0; if (dd > worst) worst = dd; }
+    return worst;
+  }, [equity]);
 
   useEffect(() => {
     const total = INITIAL_CAPITAL + sessionPnl;
@@ -303,7 +327,7 @@ export default function App() {
       const r = await fetch('/api/groww/connect', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) });
       const j = await r.json();
       await fetchStatus();
-      if (j.ok) { pushToast('ok', 'GROWW CONNECTED', 'Live routing enabled. Feed stays simulated until P1.'); addEvent('GROWW connected — live order routing armed', 'up'); }
+      if (j.ok) { pushToast('ok', 'GROWW CONNECTED', 'Live routing armed — the desk now streams real Groww prices and orders route to NSE/BSE.'); addEvent('GROWW connected — LIVE quotes + LIVE orders armed', 'up'); }
       else addEvent(`GROWW connect failed — ${j.reason || 'unknown'}`, 'down');
       return j;
     } catch (e) { return { ok: false, reason: `Request failed: ${e.message}` }; }
@@ -326,20 +350,20 @@ export default function App() {
 
   // ── render ──────────────────────────────────────────────────────
   const isOpen = nseOpenNow();
-  const latency = Math.round(9 + Math.abs(Math.sin(tick / 3)) * 7);
+  const latency = liveState.lastLatencyMs; // measured /api fetch latency; null until first response
   const action = selectedSignal?.action ?? 'NEUTRAL';
   const confidence = selectedSignal?.confidence ?? 50;
   const signalCls = action === 'BUY' ? 'bull' : action === 'SELL' ? 'bear' : 'flat';
-  const money = (n) => formatNumberIN(n);
+  const money = (n) => (typeof n === 'number' && Number.isFinite(n) ? formatNumberIN(n) : '—');
 
   const factorCards = [
-    { label: 'REGIME', value: regime.label, cls: regime.cls, sub: 'breadth led' },
+    { label: 'REGIME', value: regime.label, cls: regime.cls, sub: breadth ? 'breadth led' : 'needs feed' },
     { label: 'SIGNAL', value: action, cls: signalCls, hot: action !== 'NEUTRAL', sub: instType === 'stock' ? 'watchlist scan' : 'index scan' },
     { label: 'CONFIDENCE', value: `${confidence}%`, cls: 'amber', bar: confidence, sub: 'EMA+RSI+ATR' },
     { label: 'EMA TREND', value: trendUp ? '9 > 21' : '9 < 21', cls: trendUp ? 'bull' : 'bear', sub: `${trendUp ? '+' : ''}${emaDiff.toFixed(2)}% spread` },
     { label: 'RSI 14', value: rsiVal.toFixed(1), cls: 'flat', sub: rsiZone },
     { label: 'ATR 14', value: `₹${atrVal.toFixed(2)}`, cls: 'flat', sub: 'true range' },
-    { label: 'INDIA VIX', value: vixVal.toFixed(2), cls: vixVal > 15 ? 'bear' : 'flat', sub: 'volatility' },
+    { label: 'INDIA VIX', value: vixVal == null ? '—' : vixVal.toFixed(2), cls: vixVal != null && vixVal > 15 ? 'bear' : 'flat', sub: 'volatility' },
   ];
 
   return (
@@ -373,7 +397,7 @@ export default function App() {
         </div>
         <div className={`mode-badge ${mode === 'live' ? 'live' : 'paper'}`} title={growwStatus?.tokenExpiryNote || ''}>
           <span className="mode-dot" />
-          {mode === 'live' ? 'GROWW LIVE' : 'PAPER'}
+          {mode === 'live' ? 'GROWW LIVE' : (isPaperEnabled() ? 'PAPER SIM' : 'NO FEED')}
         </div>
         <a className="icon-btn desk-link" href="/desk.html" title="Open QlibPro Desk — the GrokDesk-adapted terminal (Indian markets)" aria-label="Open QlibPro Desk terminal">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 8.5 12 15 22 8.5" /><polyline points="2 13.5 12 20 22 13.5" /></svg>
@@ -393,17 +417,17 @@ export default function App() {
 
       {/* ── STATS STRIP ─────────────────────────────────────── */}
       <div className="statsbar">
-        <span className="stat"><label>LAST</label><b className="num">₹{money(ltp)}<i className={dayUp ? 'pos' : 'neg'}> ({dayUp ? '+' : ''}{chgInfo.pct.toFixed(2)}%)</i></b></span>
+        <span className="stat"><label>LAST</label><b className="num">₹{money(ltp)}{chgInfo && <i className={dayUp ? 'pos' : 'neg'}> ({dayUp ? '+' : ''}{chgInfo.pct.toFixed(2)}%)</i>}</b></span>
         <span className="stat-sep">·</span>
-        <span className="stat"><label>FEED</label><b>{mode === 'live' ? 'GROWW+SIM' : 'SIMULATED'}</b></span>
+        <span className="stat"><label>FEED</label><b>{mode === 'live' ? 'GROWW' : (isPaperEnabled() ? 'PAPER·SIM' : 'OFFLINE')}</b></span>
         <span className="stat-sep">·</span>
         <span className="stat"><label>ORDERS</label><b className="num">{ordersToday}</b></span>
         <span className="stat-sep">·</span>
-        <span className="stat"><label>MAX DD</label><b className="num">0.0%</b></span>
+        <span className="stat"><label>MAX DD</label><b className="num">{maxDrawdown == null ? '—' : `${maxDrawdown.toFixed(1)}%`}</b></span>
         <span className="stat-sep">·</span>
         <span className="stat"><label>SESS P&amp;L</label><b className={`num ${sessionPnl >= 0 ? 'pos' : 'neg'}`}>{formatSignedINR(sessionPnl)}</b></span>
         <span className="stat-sep">·</span>
-        <span className="stat"><label>GROWW</label><b>{mode === 'live' ? 'CONNECTED' : 'PAPER ONLY'}</b></span>
+        <span className="stat"><label>GROWW</label><b>{mode === 'live' ? 'CONNECTED' : 'NOT CONNECTED'}</b></span>
         <span className="spacer" />
         <span className="stat dim">MONO·0.9 · <b>NOT FINANCIAL ADVICE</b></span>
       </div>
@@ -411,14 +435,14 @@ export default function App() {
       {/* ── INDEX STRIP ─────────────────────────────────────── */}
       <div className="indexstrip" role="tablist" aria-label="Benchmarks">
         {indices.map(ix => {
-          const { chg, pct } = engine.change(ix.symbol);
-          const up = chg >= 0;
+          const ch = ix.ltp == null ? null : engine.change(ix.symbol);
+          const up = (ch?.chg ?? 0) >= 0;
           const active = selected === ix.symbol;
           return (
             <button key={ix.symbol} role="tab" aria-selected={active} className={`idx-chip${active ? ' active' : ''}`} onClick={() => setSelected(ix.symbol)}>
               <span className="idx-name">{ix.name.toUpperCase()}</span>
-              <span className="idx-val num">{formatNumberIN(ix.ltp, 2)}</span>
-              <span className={`idx-chg num ${up ? 'pos' : 'neg'}`}>{up ? '▲' : '▼'} {Math.abs(pct).toFixed(2)}%</span>
+              <span className="idx-val num">{ix.ltp == null ? '—' : formatNumberIN(ix.ltp, 2)}</span>
+              <span className={`idx-chg num ${ch ? (up ? 'pos' : 'neg') : 'dim'}`}>{ch ? `${up ? '▲' : '▼'} ${Math.abs(ch.pct).toFixed(2)}%` : 'no data'}</span>
             </button>
           );
         })}
@@ -486,8 +510,8 @@ export default function App() {
               <div className="orbit-tl">
                 <div className="orbit-exchange">{inst?.exchange} · {instType === 'stock' ? 'EQ' : instType === 'vix' ? 'VOL' : 'INDEX'}</div>
                 <div className="orbit-symbol">{selected}</div>
-                <div className="orbit-ltp num">₹{money(ltp)}</div>
-                <div className={`orbit-chg num ${dayUp ? 'pos' : 'neg'}`}>{dayUp ? '▲' : '▼'} {Math.abs(chgInfo.pct).toFixed(2)}% vs prev close</div>
+                <div className="orbit-ltp num">{ltp == null ? '₹—' : `₹${money(ltp)}`}</div>
+                <div className={`orbit-chg num ${chgInfo ? (dayUp ? 'pos' : 'neg') : 'dim'}`}>{chgInfo ? `${dayUp ? '▲' : '▼'} ${Math.abs(chgInfo.pct).toFixed(2)}% vs prev close` : 'awaiting Groww quotes'}</div>
               </div>
               <div className="orbit-signal">
                 <div className="orbit-signal-label">THE CLOSER</div>
@@ -534,7 +558,7 @@ export default function App() {
           panelId="panel-chart"
         />
         <div className="panel ladder-panel">
-          <div className="panel-title">Depth <span className="spacer" /><span className="chip">{inst?.exchange} · SIM</span></div>
+          <div className="panel-title">Depth <span className="spacer" /><span className="chip">{inst?.exchange} · {isPaperEnabled() ? 'SIM' : 'GROWW'}</span></div>
           <DepthBook symbol={selected} levels={7} />
         </div>
         <OrderTicket symbol={selected} symbolType={instType} mode={mode} halted={halted} onPlace={placeOrder} />
@@ -544,8 +568,8 @@ export default function App() {
       <footer className="statusbar">
         <span className="status-dot" />
         <span>QLIB PRO <b>ONLINE</b></span>
-        <span>FEED <b>{mode === 'live' ? 'GROWW+SIM' : 'SIMULATED'}</b></span>
-        <span>LATENCY <b>~{latency}ms</b></span>
+        <span>FEED <b>{mode === 'live' ? 'GROWW' : (isPaperEnabled() ? 'PAPER·SIM' : 'OFFLINE')}</b></span>
+        <span>LATENCY <b>{latency == null ? '—' : `${latency}ms`}</b></span>
         <span>ORDERS TODAY <b>{ordersToday}</b></span>
         <span>GROWW <b>{mode === 'live' ? 'CONNECTED' : 'PAPER'}</b></span>
         <span className="spacer" />
@@ -562,6 +586,8 @@ export default function App() {
         tokenSource={growwStatus?.tokenSource}
         onConnect={connectGroww}
         onDisconnect={disconnectGroww}
+        paper={isPaperEnabled()}
+        onPaperChange={(on) => { setPaperEnabled(on); setTick(t => t + 1); pushToast(on ? 'warn' : 'ok', on ? 'PAPER SIMULATION ON' : 'PAPER OFF', on ? 'Synthetic feed — not the market.' : 'Synthetic feed disabled. Dashes or Groww live data only.'); }}
       />
     </div>
   );
