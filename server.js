@@ -4,6 +4,7 @@
 // The browser never sees the token; it only learns connection status.
 // ─────────────────────────────────────────────────────────────────────────────
 import express from 'express';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -15,9 +16,21 @@ const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '256kb' }));
 
-// token state (memory only)
+// token state (memory only — secrets never touch disk or the browser)
 let tokenMemory = process.env.GROWW_ACCESS_TOKEN || null;
 let connectedAt = process.env.GROWW_ACCESS_TOKEN ? Date.now() : null;
+let tokenIssuedAt = process.env.GROWW_ACCESS_TOKEN ? Date.now() : 0;
+let tokenAuthMode = process.env.GROWW_ACCESS_TOKEN ? 'env-token' : null; // 'env-token' | 'manual-token' | 'approval' | 'totp'
+let lastAuthError = null;
+// credentials for silent daily re-auth (from env or a connect-keys call). 6-digit codes are never stored.
+let credsMemory = null;
+if (process.env.GROWW_TOTP_KEY && process.env.GROWW_TOTP_SECRET) {
+  credsMemory = { mode: 'totp', apiKey: process.env.GROWW_TOTP_KEY, totpSecret: process.env.GROWW_TOTP_SECRET };
+  tokenAuthMode = tokenAuthMode || 'totp';
+} else if (process.env.GROWW_API_KEY && process.env.GROWW_API_SECRET) {
+  credsMemory = { mode: 'approval', apiKey: process.env.GROWW_API_KEY, secret: process.env.GROWW_API_SECRET };
+  tokenAuthMode = tokenAuthMode || 'approval';
+}
 const startedAt = Date.now();
 
 const growwHeaders = (token) => ({
@@ -46,6 +59,91 @@ async function growwCall(pathname, { method = 'GET', body, token, timeoutMs = 60
   } finally {
     clearTimeout(timer);
   }
+}
+
+
+// ── RFC 6238 TOTP (HMAC-SHA1, 30s step, 6 digits) — no dependency ─────────────
+const B32_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+function base32Decode(b32) {
+  let bits = '';
+  for (const ch of String(b32).replace(/=+$/, '').toUpperCase()) {
+    const v = B32_ALPHA.indexOf(ch);
+    if (v < 0) throw new Error('invalid base32 secret');
+    bits += v.toString(2).padStart(5, '0');
+  }
+  const bytes = [];
+  for (let i = 0; i + 8 <= bits.length; i += 8) bytes.push(parseInt(bits.slice(i, i + 8), 2));
+  return Buffer.from(bytes);
+}
+function totpCode(secretB32, timeMs = Date.now()) {
+  const key = base32Decode(secretB32);
+  const counter = Math.floor(timeMs / 30000);
+  const buf = Buffer.alloc(8);
+  buf.writeBigUInt64BE(BigInt(counter));
+  const h = crypto.createHmac('sha1', key).update(buf).digest();
+  const off = h[h.length - 1] & 0xf;
+  const code = ((h[off] & 0x7f) << 24) | ((h[off + 1] & 0xff) << 16) | ((h[off + 2] & 0xff) << 8) | (h[off + 3] & 0xff);
+  return String(code % 1000000).padStart(6, '0');
+}
+
+// Exchange API key + secret (approval) or TOTP for a daily access token.
+// POST /v1/token/api/access — see https://groww.in/trade-api/docs/curl
+async function generateAccessToken({ mode, apiKey, secret, totpSecret, totp }) {
+  const post = async (body, checksumKind) => {
+    const payload = { ...body };
+    if (checksumKind) payload.checksum = checksumKind === 'hex'
+      ? crypto.createHash('sha256').update(secret + body.timestamp).digest('hex')
+      : crypto.createHash('sha256').update(secret + body.timestamp).digest('base64');
+    const r = await growwCall('/v1/token/api/access', {
+      method: 'POST', body: payload, token: apiKey, timeoutMs: 8000,
+      // apiKey IS the Bearer here (it is the API/TOTP key, not an access token)
+    });
+    return r;
+  };
+  const tryApproval = async () => {
+    const ts = String(Math.floor(Date.now() / 1000));
+    for (const kind of ['hex', 'base64']) {
+      const r = await post({ key_type: 'approval', timestamp: ts }, kind);
+      if (r.networkError) return { ok: false, reason: `Groww unreachable: ${r.error}` };
+      if (r.json?.status === 'SUCCESS') return { ok: true, token: extractToken(r.json), raw: r.json };
+      if (r.httpOk === false && (r.status === 401 || r.status === 403)) {
+        return { ok: false, reason: `Groww rejected the API key (HTTP ${r.status}): ${r.json?.error?.message || 'unauthorized'}` };
+      }
+      if (kind === 'hex') continue; // retry with base64 checksum once
+      return { ok: false, reason: r.json?.error?.message || `token request failed (HTTP ${r.status})`, raw: r.json ?? r.text };
+    }
+  };
+  const tryTotp = async () => {
+    let code = totp;
+    try { code = code || totpCode(totpSecret); } catch (e) { return { ok: false, reason: `TOTP secret invalid: ${e.message}` }; }
+    const r = await growwCall('/v1/token/api/access', { method: 'POST', body: { key_type: 'totp', totp: code }, token: apiKey, timeoutMs: 8000 });
+    if (r.networkError) return { ok: false, reason: `Groww unreachable: ${r.error}` };
+    if (r.json?.status === 'SUCCESS') return { ok: true, token: extractToken(r.json), raw: r.json };
+    return { ok: false, reason: r.json?.error?.message || `TOTP rejected (HTTP ${r.status})`, raw: r.json ?? r.text };
+  };
+  const parsed = mode === 'totp' ? await tryTotp() : await tryApproval();
+  if (!parsed.ok) { lastAuthError = parsed.reason; return parsed; }
+  if (!parsed.token) { lastAuthError = 'Groww returned SUCCESS but no recognizable token field'; return { ok: false, reason: lastAuthError, raw: parsed.raw }; }
+  lastAuthError = null;
+  return { ok: true, token: parsed.token };
+}
+function extractToken(json) {
+  const p = json?.payload ?? {};
+  const candidates = [p.access_token, p.token, p.auth_token, p.accessToken, p.jwt, json?.access_token, json?.token];
+  for (const c of candidates) if (typeof c === 'string' && c.length > 10) return c;
+  if (typeof p === 'string' && p.length > 10) return p;
+  return null; // caller surfaces rawPreview — never guess field names silently
+}
+
+// silent re-auth: tokens expire daily at 06:00 IST; if we hold credentials
+// (env or a connect-keys call) and the token is older than ~20h, mint a fresh one.
+async function maybeAutoRefresh() {
+  if (!credsMemory) return;
+  const ageMs = tokenIssuedAt ? Date.now() - tokenIssuedAt : Infinity;
+  if (tokenMemory && ageMs < 20 * 3600 * 1000) return;
+  const r = await generateAccessToken(credsMemory);
+  if (r.ok) { tokenMemory = r.token; tokenIssuedAt = Date.now(); connectedAt = Date.now(); tokenAuthMode = credsMemory.mode; console.log('[qlibpro] Groww access token auto-refreshed via', credsMemory.mode); }
+  else console.warn('[qlibpro] Groww auto-refresh failed:', r.reason);
 }
 
 // candidate endpoints used ONLY to validate a token on connect
@@ -197,7 +295,13 @@ app.get('/api/groww/status', (_req, res) => {
     mode: tokenMemory ? 'live' : 'paper',
     connected: Boolean(tokenMemory),
     connectedAt,
-    tokenSource: tokenMemory ? (process.env.GROWW_ACCESS_TOKEN ? 'env' : 'session') : null,
+    tokenSource: tokenMemory ? (tokenAuthMode === 'env-token' ? 'env' : 'session') : null,
+    authMode: tokenMemory ? tokenAuthMode : null,
+    autoRefresh: Boolean(credsMemory),
+    autoRefreshIn: credsMemory ? (tokenIssuedAt ? Math.max(0, Math.round((tokenIssuedAt + 20 * 3600 * 1000 - Date.now()) / 60000)) : 0) : null,
+    tokenAgeMin: tokenIssuedAt ? Math.round((Date.now() - tokenIssuedAt) / 60000) : null,
+    lastAuthError,
+    envKeys: { totp: Boolean(process.env.GROWW_TOTP_KEY && process.env.GROWW_TOTP_SECRET), approval: Boolean(process.env.GROWW_API_KEY && process.env.GROWW_API_SECRET) },
     tokenExpiryNote: 'Access tokens expire daily at 06:00 IST — reconnect each morning or use the TOTP flow',
     docs: 'https://groww.in/trade-api/docs',
     rateLimits: { orders: '10/s · 250/min', liveData: '10/s · 300/min', nonTrading: '20/s · 500/min' },
@@ -219,8 +323,11 @@ app.post('/api/groww/connect', async (req, res) => {
     const status = r.json?.status;
     if (r.httpOk && status === 'SUCCESS') {
       tokenMemory = token;
+      tokenIssuedAt = Date.now();
+      tokenAuthMode = 'manual-token';
+      credsMemory = null; // a manual token should not be silently overwritten by auto-refresh
       connectedAt = Date.now();
-      return res.json({ ok: true, mode: 'live', validatedVia: p });
+      return res.json({ ok: true, mode: 'live', validatedVia: p, authMode: 'manual-token' });
     }
     lastMessage = r.json?.error?.message || r.text || '';
     if (r.status === 401 || r.status === 403 || status === 'FAILURE') {
@@ -238,7 +345,54 @@ app.post('/api/groww/connect', async (req, res) => {
 app.post('/api/groww/disconnect', (_req, res) => {
   tokenMemory = null;
   connectedAt = null;
+  tokenIssuedAt = 0;
+  tokenAuthMode = null;
+  credsMemory = null; // stop auto-refresh for this session (env creds re-arm on restart)
   res.json({ ok: true, mode: 'paper' });
+});
+
+
+// POST /api/groww/connect-keys — generate a daily access token from API credentials.
+// Body: { mode:'totp', totpKey, totpSecret }           (Base32 secret — fully automatic)
+//     | { mode:'totp', totpKey, totp:'123456' }        (manual 6-digit, one-shot)
+//     | { mode:'approval', apiKey, apiSecret }          (SHA-256 checksum flow)
+// Secrets are held in memory only; never logged, never written, never sent anywhere but api.groww.in.
+app.post('/api/groww/connect-keys', async (req, res) => {
+  const b = req.body || {};
+  const mode = String(b.mode || '').toLowerCase();
+  let gen = null;
+  if (mode === 'totp') {
+    const totpKey = String(b.totpKey || '').trim();
+    const totpSecret = String(b.totpSecret || '').trim();
+    const totp = String(b.totp || '').trim();
+    if (!totpKey) return res.status(400).json({ ok: false, reason: 'TOTP key required — Groww → Settings → Trading APIs → Generate TOTP token.' });
+    if (!totpSecret && !/^\d{6}$/.test(totp)) return res.status(400).json({ ok: false, reason: 'Provide either the Base32 TOTP secret (automatic) or the current 6-digit TOTP code.' });
+    gen = { mode: 'totp', apiKey: totpKey, totpSecret: totpSecret || undefined, totp: totpSecret ? undefined : totp };
+  } else if (mode === 'approval') {
+    const apiKey = String(b.apiKey || '').trim();
+    const apiSecret = String(b.apiSecret || '').trim();
+    if (!apiKey || !apiSecret) return res.status(400).json({ ok: false, reason: 'API key and API secret are both required (Groww → Settings → Trading APIs → Generate API Key).' });
+    gen = { mode: 'approval', apiKey, secret: apiSecret };
+  } else {
+    return res.status(400).json({ ok: false, reason: "mode must be 'totp' or 'approval'" });
+  }
+  const r = await generateAccessToken(gen);
+  if (!r.ok) {
+    return res.status(502).json({ ok: false, reason: r.reason, ...(r.raw ? { raw: JSON.stringify(r.raw).slice(0, 240) } : {}) });
+  }
+  // validate the freshly minted token before declaring victory
+  let validatedVia = null;
+  for (const p of VALIDATION_PATHS) {
+    const chk = await growwCall(p, { token: r.token, timeoutMs: 6000 });
+    if (chk.networkError) { lastAuthError = `token minted but Groww unreachable for validation: ${chk.error}`; return res.status(502).json({ ok: false, reason: lastAuthError }); }
+    if (chk.httpOk && chk.json?.status === 'SUCCESS') { validatedVia = p; break; }
+    if (chk.status === 401 || chk.status === 403) { lastAuthError = 'minted token was rejected by Groww'; return res.status(502).json({ ok: false, reason: lastAuthError }); }
+  }
+  tokenMemory = r.token; tokenIssuedAt = Date.now(); connectedAt = Date.now();
+  tokenAuthMode = mode;
+  credsMemory = totpProvided(gen) ? null : gen; // env-style auto path needs the secret; one-shot 6-digit can't re-auth
+  function totpProvided(g) { return g.mode === 'totp' && !g.totpSecret; }
+  res.json({ ok: true, mode: 'live', authMode: mode, validatedVia, autoRefresh: Boolean(credsMemory), tokenExpiresNote: 'Access tokens expire daily at 06:00 IST — auto-refresh is on while credentials are held in memory.' });
 });
 
 // Generic authenticated proxy → https://api.groww.in/v1/*
@@ -308,6 +462,12 @@ const distDir = path.join(__dirname, 'dist');
 app.use('/assets', express.static(path.join(distDir, 'assets'), { maxAge: '30d', immutable: true }));
 app.use(express.static(distDir, { maxAge: '1h' }));
 app.get('*', (_req, res) => res.sendFile(path.join(distDir, 'index.html')));
+
+// silent boot-time auth when credentials are configured via env
+if (!tokenMemory && credsMemory) {
+  maybeAutoRefresh().catch(e => console.warn('[qlibpro] boot auth failed:', e?.message || e));
+}
+setInterval(() => { maybeAutoRefresh().catch(() => {}); }, 20 * 60 * 1000).unref();
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[qlibpro] listening on http://0.0.0.0:${PORT}  (mode: ${tokenMemory ? 'GROWW LIVE' : 'PAPER'})`);

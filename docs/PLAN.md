@@ -181,3 +181,10 @@ Two pages ship from the same Express server:
 - `public/desk.html` mirrors the same behavior: ribbon/ticker/positions/VAULT read the shared ledger + Groww LTPs; hive/stream/corr-matrix/run-rate either compute from real 5m candles or render dashes; the scripted “+8.6% banked” reel plays only in paper mode.
 - Verified end-to-end against a local Groww API stub (connect → LTP → candles → quote → order): full path works; live SENSEX orders route to BSE. Real `api.groww.in` egress is blocked from Arena’s sandbox (HTTP 000), so production use needs a host with normal outbound HTTPS.
 - Failure honesty: 401 when disconnected, 502 “could not reach api.groww.in” when egress blocked, 401 with Groww’s own message for bad tokens — never silently falls back to simulated prices.
+
+## Groww auth in-app (added 2026-11-08)
+
+- `POST /api/groww/connect-keys` — mints a daily access token from **TOTP** (`key_type:'totp'`; server-side RFC 6238 over the Base32 secret — zero daily clicks) or **API Key+Secret** (`key_type:'approval'`; SHA-256 checksum, hex with base64 fallback). Validates the minted token against a live read path before marking connected; failures never store anything.
+- Server auto-refresh: boot-time silent auth when `GROWW_TOTP_KEY`/`GROWW_TOTP_SECRET` (or `GROWW_API_KEY`/`GROWW_API_SECRET`) are in `.env`, then every ~20h. Credentials held **in memory only**; a manual token paste clears auto-refresh (explicit choice wins); Disconnect stops it for the session.
+- Settings gear now exposes all three methods (TOTP auto / approval / manual token) + PAPER simulation toggle. Secrets are typed into password fields, POSTed to the local server, and never persisted.
+- Verified end-to-end against a local Groww stub v2 (token endpoint + LTP/quote/candles/orders): boot-time TOTP auth, typed-TOTP connect, one-shot 6-digit connect, approval connect, and wrong-credential rejection (token not stored).

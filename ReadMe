@@ -29,7 +29,12 @@ npm run dev        # terminal 2 — Vite dev server
 
 - **LIVE data (default)**: when a Groww token is connected, prices, candles (5m/15m/1H/1D), depth (Top-5) and order routing all come from the real Groww API — **no simulated fallback**. Without a token the desk shows dashes, never fabricated ticks.
 - **PAPER mode (opt-in, off by default)**: ₹10,00,000 paper capital, instant fills at simulated LTP ± slippage — enable via Settings (gear) → **PAPER SIMULATION**, or `localStorage qlibpro.paper = '1'`.
-- **GROWW LIVE mode**: run the server on a machine with outbound HTTPS to `api.groww.in` → click the gear → paste your Groww **Access Token** (groww.in → Profile → Settings → Trading APIs → Access Token; expires daily 06:00 IST; requires the Trading API subscription). The server validates it against the real API, keeps it in **memory only**, and routes `BUY/SELL` orders to `POST /v1/order/create` with unique `order_reference_id`. Market data remains simulated until Phase 1 of the roadmap (`docs/PLAN.md`).
+- **GROWW LIVE mode**: run the server on a machine with outbound HTTPS to `api.groww.in` → click the gear → connect with any of three methods (memory-only, never written to disk or sent anywhere but `api.groww.in`):
+  1. **TOTP · Auto** (recommended for unattended bots) — Groww → Trading APIs → Generate TOTP token → paste the **TOTP key** + **Base32 TOTP secret**; the server computes RFC-6238 codes and mints **and silently re-mints** the daily token (~every 20h). No daily clicks. (Or set `GROWW_TOTP_KEY`/`GROWW_TOTP_SECRET` in `.env` for fully silent boot-time auth.)
+  2. **API Key + Secret ("approval")** — server computes `SHA-256(secret + timestamp)` (hex, base64 fallback) and exchanges it at `POST /v1/token/api/access`. Groww may require an "Approve" tap on their Trading APIs page each day.
+  3. **Access Token (manual)** — paste the daily token (expires 06:00 IST).
+
+  Live mode streams real prices/candles/depth and routes `BUY/SELL` orders to `POST /v1/order/create` with a unique `order_reference_id` (SENSEX → BSE, stocks → NSE). Market open/close honours NSE's 09:15–15:30 IST session. Note: live orders in PAPER-off state still require a connected token — there is no silent fallback to paper.
 - **Honest labels everywhere**: PAPER SIM / GROWW LIVE / OFFLINE badges, token-expiry notes, no silent live orders, indices blocked from live orders (F&O required).
 - **API**: `/api/ltp` (batched CASH LTP incl. indices), `/api/quote` (snapshot + depth), `/api/candles` (OHLCV history), `/api/groww/connect|disconnect|status`, `/api/order` (routes SENSEX → BSE, others → NSE), `/api/groww/proxy/*`.
 

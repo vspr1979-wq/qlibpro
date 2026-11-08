@@ -494,3 +494,16 @@ button { font-family: inherit; cursor: pointer; }
 /* ── empty-chart state (no feed / no token) ── */
 .chart-empty { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; text-align: center; color: var(--dimmer); font-family: var(--mono); letter-spacing: .18em; font-size: 11px; font-weight: 800; }
 .chart-empty span { font-family: Inter, sans-serif; letter-spacing: 0; text-transform: none; font-size: 9.5px; font-weight: 400; color: var(--dimmer); line-height: 1.7; }
+
+/* ── Groww auth method tabs in settings ── */
+.auth-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--panel-2); border: 1px solid var(--border-soft); padding: 4px; border-radius: 8px; }
+.auth-tab { background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 1px; color: var(--dim); }
+.auth-tab b { font-size: 9px; letter-spacing: .04em; }
+.auth-tab small { font-size: 7px; text-transform: uppercase; letter-spacing: .1em; color: var(--dimmer); }
+.auth-tab:hover { color: var(--text); }
+.auth-tab.active { background: var(--panel); border-color: var(--amber); color: var(--amber-ink); box-shadow: 0 0 0 1px rgba(217,119,6,.35); }
+.auth-tab.active small { color: var(--amber); }
+.auth-pane { display: flex; flex-direction: column; gap: 8px; }
+.auth-steps { font-size: 9px; color: var(--dim); line-height: 1.6; background: var(--panel-2); border: 1px dashed var(--border); border-radius: 7px; padding: 7px 9px; }
+.auth-steps code { font-family: var(--mono); font-size: 8.5px; background: #e8e4d6; border-radius: 3px; padding: 0 4px; }
+.env-chip { font-size: 9px; color: #14532d; background: rgba(21,128,61,.1); border: 1px solid rgba(21,128,61,.35); border-radius: 6px; padding: 6px 9px; }

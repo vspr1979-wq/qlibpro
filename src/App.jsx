@@ -333,6 +333,21 @@ export default function App() {
     } catch (e) { return { ok: false, reason: `Request failed: ${e.message}` }; }
   }, [fetchStatus, pushToast, addEvent]);
 
+  const connectGrowwKeys = useCallback(async (payload) => {
+    try {
+      const r = await fetch('/api/groww/connect-keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const j = await r.json();
+      await fetchStatus();
+      if (j.ok) {
+        pushToast('ok', 'GROWW CONNECTED', `Auth via ${j.authMode === 'totp' ? 'TOTP (auto)' : 'API Key + Secret'}${j.autoRefresh ? ' · silent daily re-auth armed' : ''}.`);
+        addEvent(`GROWW connected — ${j.authMode === 'totp' ? 'TOTP auto' : 'approval keys'} · live orders armed`, 'up');
+      } else {
+        addEvent(`GROWW key auth failed — ${j.reason || 'unknown'}`, 'down');
+      }
+      return j;
+    } catch (e) { return { ok: false, reason: `Request failed: ${e.message}` }; }
+  }, [fetchStatus, pushToast, addEvent]);
+
   const disconnectGroww = useCallback(async () => {
     try { await fetch('/api/groww/disconnect', { method: 'POST' }); } catch { /* ignore */ }
     await fetchStatus();
@@ -585,6 +600,12 @@ export default function App() {
         connectedAt={growwStatus?.connectedAt}
         tokenSource={growwStatus?.tokenSource}
         onConnect={connectGroww}
+        onConnectKeys={connectGrowwKeys}
+        authMode={growwStatus?.authMode}
+        autoRefresh={growwStatus?.autoRefresh}
+        tokenAgeMin={growwStatus?.tokenAgeMin}
+        lastAuthError={growwStatus?.lastAuthError}
+        envKeys={growwStatus?.envKeys}
         onDisconnect={disconnectGroww}
         paper={isPaperEnabled()}
         onPaperChange={(on) => { setPaperEnabled(on); setTick(t => t + 1); pushToast(on ? 'warn' : 'ok', on ? 'PAPER SIMULATION ON' : 'PAPER OFF', on ? 'Synthetic feed — not the market.' : 'Synthetic feed disabled. Dashes or Groww live data only.'); }}
